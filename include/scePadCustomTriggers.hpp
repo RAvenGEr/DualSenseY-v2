@@ -46,4 +46,4 @@ void CustomTriggerBetterVibration(std::vector<uint8_t> param, uint8_t ffb[11]);
 void CustomTriggerVIBRATE_TRIGGER_10Hz(std::vector<uint8_t> param, uint8_t ffb[11]);
 void CustomTriggerOFF(uint8_t ffb[11]);
 
-#endif // CUSTOMTRIGGERS_H
+#endif  // CUSTOMTRIGGERS_H

@@ -37,15 +37,13 @@ bool isLightMode = false;
 bool IsWindowsLightMode() {
 	DWORD value = 1;
 	DWORD size = sizeof(value);
-	if (RegGetValueW(
-		HKEY_CURRENT_USER,
-		L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
-		L"AppsUseLightTheme",
-		RRF_RT_DWORD,
-		nullptr,
-		&value,
-		&size
-		) != ERROR_SUCCESS)
+	if (RegGetValueW(HKEY_CURRENT_USER,
+					 L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+					 L"AppsUseLightTheme",
+					 RRF_RT_DWORD,
+					 nullptr,
+					 &value,
+					 &size) != ERROR_SUCCESS)
 		return true;
 	return value != 0;
 }
@@ -116,13 +114,14 @@ bool Application::Run(const std::string& Argument1) {
 
 #pragma region Initialize application
 	LoadAppSettings(&m_AppSettings);
-	SaveAppSettings(&m_AppSettings); // Save here so it updates
+	SaveAppSettings(&m_AppSettings);  // Save here so it updates
 	UDP udp(m_AppSettings.LocalPort);
 	if (udp.IsConnectedInsteadOfBinded()) {
-			
-		if (Argument1 != "") udp.SendConfigPathToAnotherInstance(Argument1);
-		else udp.BringOtherInstanceToFront();
-		
+		if (Argument1 != "")
+			udp.SendConfigPathToAnotherInstance(Argument1);
+		else
+			udp.BringOtherInstanceToFront();
+
 		std::exit(0);
 	}
 
@@ -132,7 +131,8 @@ bool Application::Run(const std::string& Argument1) {
 	KeyboardMouseMapper keyboardMouseMapper(m_ScePadSettings);
 	Client client(m_ScePadSettings);
 	client.Start();
-	if (!m_AppSettings.DontConnectToServerOnStart) client.Connect(m_AppSettings.ServerAddress, m_AppSettings.ServerPort);
+	if (!m_AppSettings.DontConnectToServerOnStart)
+		client.Connect(m_AppSettings.ServerAddress, m_AppSettings.ServerPort);
 	client.AllowedToHostController = vigem.IsVigemConnected();
 	vigem.SetPeerControllerDataPointer(client.GetActivePeerControllerMap());
 	strings.ReadStringsFromJson(CountryCodeToFile(m_AppSettings.SelectedLanguage));
@@ -167,7 +167,7 @@ bool Application::Run(const std::string& Argument1) {
 		bool v_isMinimized = IsMinimized();
 		occasionalFrameWhenMinimized = v_isMinimized ? occasionalFrameWhenMinimized + 1 : 0;
 
-	#pragma region ImGUI
+#pragma region ImGUI
 		bool finishFrame = false;
 		if (v_isMinimized && occasionalFrameWhenMinimized > 500 || !v_isMinimized) {
 			glClear(GL_COLOR_BUFFER_BIT);
@@ -176,13 +176,13 @@ bool Application::Run(const std::string& Argument1) {
 			glViewport(0, 0, display_w, display_h);
 			glfwGetWindowContentScale(m_GlfwWindow.get(), &xscale, &yscale);
 
-		#if !defined(__linux__) && !defined(__MACOS__)
+#if !defined(__linux__) && !defined(__MACOS__)
 			if (colorsChanged || winSettingChange) {
 				SetStyleAndColors();
 				colorsChanged = false;
 				winSettingChange = false;
 			}
-		#endif
+#endif
 
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplGlfw_NewFrame();
@@ -191,7 +191,7 @@ bool Application::Run(const std::string& Argument1) {
 			io.FontGlobalScale = xscale + 0.5;
 			finishFrame = true;
 		}
-	#pragma endregion
+#pragma endregion
 
 		int selectedController = main.GetSelectedController();
 		vigem.SetSelectedController(selectedController);
@@ -201,7 +201,9 @@ bool Application::Run(const std::string& Argument1) {
 
 		for (int i = 0; i < 4; i++) {
 			LoadDefaultConfig(i, &m_ScePadSettings[i]);
-			applySettings(i, i == (selectedController) && udp.IsActive() ? udp.GetSettings() : m_ScePadSettings[i], audio);
+			applySettings(i,
+						  i == (selectedController) && udp.IsActive() ? udp.GetSettings() : m_ScePadSettings[i],
+						  audio);
 		}
 
 		if (udp.SettingsFromOtherInstanceAvailable()) {
@@ -212,7 +214,7 @@ bool Application::Run(const std::string& Argument1) {
 			RestoreWindowFromTray();
 		}
 
-	#pragma region ImGUI + GLFW
+#pragma region ImGUI + GLFW
 		DisableControllerInputIfMinimized();
 		glfwPollEvents();
 
@@ -226,14 +228,14 @@ bool Application::Run(const std::string& Argument1) {
 			ImGui::EndFrame();
 		}
 
-	#pragma endregion	
+#pragma endregion
 
-	#ifdef WINDOWS
+#ifdef WINDOWS
 		SetWaitableTimer(hTimer, &liDueTime, 0, NULL, NULL, 0);
 		WaitForSingleObject(hTimer, INFINITE);
-	#else
+#else
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
-	#endif
+#endif
 	}
 
 #ifdef WINDOWS
@@ -243,9 +245,9 @@ bool Application::Run(const std::string& Argument1) {
 }
 
 void Application::InitializeWindow() {
-	#ifdef LINUX
+#ifdef LINUX
 	glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
-	#endif
+#endif
 	glfwInit();
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -253,7 +255,8 @@ void Application::InitializeWindow() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
 
-	m_GlfwWindow = std::unique_ptr<GLFWwindow, glfwDeleter>(glfwCreateWindow(1000, 720, "DualSenseY", nullptr, nullptr));
+	m_GlfwWindow =
+		std::unique_ptr<GLFWwindow, glfwDeleter>(glfwCreateWindow(1000, 720, "DualSenseY", nullptr, nullptr));
 
 	if (!m_GlfwWindow) {
 		LOGE("Failed to create windown");
@@ -267,13 +270,12 @@ void Application::InitializeWindow() {
 		LOGE("GLAD couldn't be loaded");
 	}
 
-	#ifdef WINDOWS
-	originalWndProc = (WNDPROC)SetWindowLongPtr(glfwGetWin32Window(m_GlfwWindow.get()), GWLP_WNDPROC, (LONG_PTR)CustomWndProc);
-	#endif
+#ifdef WINDOWS
+	originalWndProc =
+		(WNDPROC)SetWindowLongPtr(glfwGetWin32Window(m_GlfwWindow.get()), GWLP_WNDPROC, (LONG_PTR)CustomWndProc);
+#endif
 
-	glfwSetWindowCloseCallback(m_GlfwWindow.get(), [](GLFWwindow* window) {
-		glfwSetWindowShouldClose(window, true);
-	});
+	glfwSetWindowCloseCallback(m_GlfwWindow.get(), [](GLFWwindow* window) { glfwSetWindowShouldClose(window, true); });
 
 	glfwSetWindowUserPointer(m_GlfwWindow.get(), this);
 	glfwSetWindowIconifyCallback(m_GlfwWindow.get(), IconifyCallback);
@@ -283,35 +285,41 @@ void Application::InitializeWindow() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Setup Platform/Renderer backends
-	ImGui_ImplGlfw_InitForOpenGL(m_GlfwWindow.get(), true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
+	ImGui_ImplGlfw_InitForOpenGL(
+		m_GlfwWindow.get(),
+		true);  // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
 	ImGui_ImplOpenGL3_Init("#version 330");
 
 	SetStyleAndColors();
 
 	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;      // IF using Docking Branch
 
-	#pragma region Load fonts
+#pragma region Load fonts
 	ImVector<ImWchar> ranges;
 	ImFontGlyphRangesBuilder builder;
 	builder.AddRanges(io.Fonts->GetGlyphRangesDefault());
 	builder.AddRanges(io.Fonts->GetGlyphRangesCyrillic());
 	builder.AddRanges(io.Fonts->GetGlyphRangesKorean());
 	builder.AddRanges(io.Fonts->GetGlyphRangesJapanese());
-	static const ImWchar arabicRanges[] = { 0x0600, 0x06FF, 0 };
+	static const ImWchar arabicRanges[] = {0x0600, 0x06FF, 0};
 	builder.BuildRanges(&ranges);
 	builder.AddRanges(io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
 
 	// Font index in appSettings.hpp
-	ImFont* regular = io.Fonts->AddFontFromFileTTF(RESOURCES_PATH "fonts/Saira_Expanded-MediumItalic.ttf", 20, nullptr, ranges.Data);
-	ImFont* japaneseAndCyrillic = io.Fonts->AddFontFromFileTTF(RESOURCES_PATH "fonts/Murecho-Regular.ttf", 20, nullptr, ranges.Data);
+	ImFont* regular =
+		io.Fonts->AddFontFromFileTTF(RESOURCES_PATH "fonts/Saira_Expanded-MediumItalic.ttf", 20, nullptr, ranges.Data);
+	ImFont* japaneseAndCyrillic =
+		io.Fonts->AddFontFromFileTTF(RESOURCES_PATH "fonts/Murecho-Regular.ttf", 20, nullptr, ranges.Data);
 	ImFont* korean = io.Fonts->AddFontFromFileTTF(RESOURCES_PATH "fonts/AstaSans-Light.ttf", 20, nullptr, ranges.Data);
 	ImFont* thai = io.Fonts->AddFontFromFileTTF(RESOURCES_PATH "fonts/Kanit-LightItalic.ttf", 20, nullptr, ranges.Data);
-	ImFont* arabic = io.Fonts->AddFontFromFileTTF(RESOURCES_PATH "fonts/NotoSansArabic-Medium.ttf", 20, nullptr, arabicRanges);
-	ImFont* chinese = io.Fonts->AddFontFromFileTTF(RESOURCES_PATH "fonts/NotoSansSC-Regular.ttf", 20, nullptr, arabicRanges);
-	#pragma endregion
+	ImFont* arabic =
+		io.Fonts->AddFontFromFileTTF(RESOURCES_PATH "fonts/NotoSansArabic-Medium.ttf", 20, nullptr, arabicRanges);
+	ImFont* chinese =
+		io.Fonts->AddFontFromFileTTF(RESOURCES_PATH "fonts/NotoSansSC-Regular.ttf", 20, nullptr, arabicRanges);
+#pragma endregion
 
 	assert(m_GlfwWindow.get() != nullptr);
 	LOGI("Window created");
@@ -343,11 +351,10 @@ void Application::SetStyleAndColors() {
 		r = (color >> 16) & 0xFF;
 		g = (color >> 8) & 0xFF;
 		b = color & 0xFF;
-		std::cout << "Accent color (ARGB): " << std::dec
-			<< "A=" << (int)a << " "
-			<< "R=" << (int)r << " "
-			<< "G=" << (int)g << " "
-			<< "B=" << (int)b << std::endl;
+		std::cout << "Accent color (ARGB): " << std::dec << "A=" << (int)a << " "
+				  << "R=" << (int)r << " "
+				  << "G=" << (int)g << " "
+				  << "B=" << (int)b << std::endl;
 		baseColor = ImVec4(r / 255.0f, g / 255.0f, b / 255.0f, 255.0f);
 	}
 	else {
@@ -357,22 +364,18 @@ void Application::SetStyleAndColors() {
 
 	// Helper lambdas for color manipulation
 	auto Lighten = [](const ImVec4& color, float amount) -> ImVec4 {
-		return ImVec4(
-			std::min(color.x + amount, 1.0f),
-			std::min(color.y + amount, 1.0f),
-			std::min(color.z + amount, 1.0f),
-			color.w
-		);
+		return ImVec4(std::min(color.x + amount, 1.0f),
+					  std::min(color.y + amount, 1.0f),
+					  std::min(color.z + amount, 1.0f),
+					  color.w);
 	};
 
 	auto Darken = [](const ImVec4& color, float amount) -> ImVec4 {
-		return ImVec4(
-			std::max(color.x - amount, 0.0f),
-			std::max(color.y - amount, 0.0f),
-			std::max(color.z - amount, 0.0f),
-			color.w
-		);
-		};
+		return ImVec4(std::max(color.x - amount, 0.0f),
+					  std::max(color.y - amount, 0.0f),
+					  std::max(color.z - amount, 0.0f),
+					  color.w);
+	};
 
 	auto AdjustAlpha = [](const ImVec4& color, float alpha) -> ImVec4 {
 		return ImVec4(color.x, color.y, color.z, alpha);
@@ -386,11 +389,11 @@ void Application::SetStyleAndColors() {
 #endif
 	static bool lastMode = !isLightMode;
 
-	if(isLightMode != lastMode) {
+	if (isLightMode != lastMode) {
 		GLFWimage image;
 		const char* whiteIcon = RESOURCES_PATH "images/iconWhite.png";
 		const char* blackIcon = RESOURCES_PATH "images/icon.png";
-		image.pixels = stbi_load(isLightMode ? blackIcon : whiteIcon, &image.width, &image.height, 0, 4); // RGBA
+		image.pixels = stbi_load(isLightMode ? blackIcon : whiteIcon, &image.width, &image.height, 0, 4);  // RGBA
 		if (image.pixels) {
 			glfwSetWindowIcon(m_GlfwWindow.get(), 1, &image);
 			stbi_image_free(image.pixels);
@@ -418,23 +421,28 @@ void Application::SetStyleAndColors() {
 		colors[ImGuiCol_ButtonActive] = Lighten(baseColor, 0.85f);
 	}
 	else {
-		#ifdef LINUX
-		int r,g,b,a=0;
+#ifdef LINUX
+		int r, g, b, a = 0;
 		colors[ImGuiCol_WindowBg] = ImVec4(0.0f, 0.0f, 0.0f, 0.8f);
-		#else
+#else
 		colors[ImGuiCol_WindowBg] = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
-		#endif
+#endif
 		colors[ImGuiCol_Text] = Lighten(baseColor, 1.0f);
 		colors[ImGuiCol_FrameBg] = Lighten(baseColor, 0.30f);
 		colors[ImGuiCol_PopupBg] = Darken(baseColor, 0.95f);
 		colors[ImGuiCol_FrameBgHovered] = Lighten(baseColor, 0.10f);
-		colors[ImGuiCol_SliderGrab] = (r < 40 || g < 40 || b < 40) ? Lighten(baseColor, 0.75f) : Darken(baseColor, 0.75f);
-		colors[ImGuiCol_SliderGrab] = (r > 100 || g > 100 || b > 100) ? Darken(baseColor, 0.75f) : Lighten(baseColor, 0.75f);
+		colors[ImGuiCol_SliderGrab] =
+			(r < 40 || g < 40 || b < 40) ? Lighten(baseColor, 0.75f) : Darken(baseColor, 0.75f);
+		colors[ImGuiCol_SliderGrab] =
+			(r > 100 || g > 100 || b > 100) ? Darken(baseColor, 0.75f) : Lighten(baseColor, 0.75f);
 		colors[ImGuiCol_SliderGrabActive] = Lighten(baseColor, 0.10f);
 		colors[ImGuiCol_Button] = (r < 40 || g < 40 || b < 40) ? Lighten(baseColor, 0.15f) : Darken(baseColor, 0.15f);
-		colors[ImGuiCol_CheckMark] = (r < 40 || g < 40 || b < 40) ? Lighten(colors[ImGuiCol_Button], 0.7f) : Darken(colors[ImGuiCol_Button], 0.7f);
-		colors[ImGuiCol_Button] = (r > 100 || g > 100 || b > 100) ? Darken(baseColor, 0.15f) : Lighten(baseColor, 0.15f);
-		colors[ImGuiCol_CheckMark] = (r > 100 || g > 100 || b > 100) ? Darken(colors[ImGuiCol_Button], 0.7f) : Lighten(colors[ImGuiCol_Button], 0.7f);
+		colors[ImGuiCol_CheckMark] = (r < 40 || g < 40 || b < 40) ? Lighten(colors[ImGuiCol_Button], 0.7f)
+																  : Darken(colors[ImGuiCol_Button], 0.7f);
+		colors[ImGuiCol_Button] =
+			(r > 100 || g > 100 || b > 100) ? Darken(baseColor, 0.15f) : Lighten(baseColor, 0.15f);
+		colors[ImGuiCol_CheckMark] = (r > 100 || g > 100 || b > 100) ? Darken(colors[ImGuiCol_Button], 0.7f)
+																	 : Lighten(colors[ImGuiCol_Button], 0.7f);
 		colors[ImGuiCol_ButtonHovered] = Lighten(baseColor, 0.55f);
 		colors[ImGuiCol_ButtonActive] = Lighten(baseColor, 1.00f);
 	}
@@ -444,13 +452,9 @@ void Application::SetStyleAndColors() {
 
 void Application::SetupTray() {
 	m_Tray = std::make_unique<Tray::Tray>("DualSenseY", RESOURCES_PATH "images/icon.ico");
-	m_Tray->addEntry(Tray::Button("Show window", [&] {
-		RestoreWindowFromTray();
-	}));
+	m_Tray->addEntry(Tray::Button("Show window", [&] { RestoreWindowFromTray(); }));
 
-	m_Tray->addEntry(Tray::Button("Hide to tray", [&] {
-		HideWindowToTray();
-	}));
+	m_Tray->addEntry(Tray::Button("Hide to tray", [&] { HideWindowToTray(); }));
 
 	m_Tray->addEntry(Tray::Separator());
 
@@ -458,10 +462,8 @@ void Application::SetupTray() {
 		m_Tray->exit();
 		std::exit(0);
 	}));
-	
-	m_TrayThread = std::thread([this] {
-		m_Tray->run();
-	});
+
+	m_TrayThread = std::thread([this] { m_Tray->run(); });
 	m_TrayThread.detach();
 }
 
@@ -490,8 +492,7 @@ Application::~Application() {
 #endif
 
 	m_Tray->exit();
-	if(m_TrayThread.joinable())
-		m_TrayThread.join();
+	if (m_TrayThread.joinable()) m_TrayThread.join();
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();

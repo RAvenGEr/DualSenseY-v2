@@ -16,35 +16,34 @@
 static inline std::filesystem::path directory = std::filesystem::path(sago::getDocumentsFolder() + "/DSY/");
 
 bool IsAlreadyRunning(const std::string& LockName) {
-    namespace fs = std::filesystem;
+	namespace fs = std::filesystem;
 
-    fs::path path = directory / LockName;
+	fs::path path = directory / LockName;
 
-    if (fs::exists(path)) {
-        std::ifstream pidFile(path);
-        int pid;
-        if (pidFile >> pid) {
-        #ifdef WINDOWS
-            HANDLE h = OpenProcess(SYNCHRONIZE, FALSE, pid);
-            if (h != NULL) {
-                CloseHandle(h);
-                return true; 
-            }
-        #else
-            if (kill(pid, 0) == 0) {
-                return true;
-            }
-        #endif
-        }
-
-    }
-
-    std::ofstream pidFile(path, std::ios::trunc);
+	if (fs::exists(path)) {
+		std::ifstream pidFile(path);
+		int pid;
+		if (pidFile >> pid) {
 #ifdef WINDOWS
-    pidFile << GetCurrentProcessId();
+			HANDLE h = OpenProcess(SYNCHRONIZE, FALSE, pid);
+			if (h != NULL) {
+				CloseHandle(h);
+				return true;
+			}
 #else
-    pidFile << getpid();
+			if (kill(pid, 0) == 0) {
+				return true;
+			}
 #endif
-    pidFile.close();
-    return false;
+		}
+	}
+
+	std::ofstream pidFile(path, std::ios::trunc);
+#ifdef WINDOWS
+	pidFile << GetCurrentProcessId();
+#else
+	pidFile << getpid();
+#endif
+	pidFile.close();
+	return false;
 }

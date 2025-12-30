@@ -12,9 +12,10 @@ private:
 	std::thread m_thread;
 	void Thread();
 	void MoveCursor(int x, int y);
+
 public:
 	KeyboardMouseMapper(s_scePadSettings* scePadSettings);
 	~KeyboardMouseMapper();
 };
 
-#endif // KEYBOARDMOUSEMAPPER_H
+#endif  // KEYBOARDMOUSEMAPPER_H

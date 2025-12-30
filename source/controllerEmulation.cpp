@@ -72,18 +72,27 @@ void Vigem::UpdateDs4ByTarget(PVIGEM_TARGET Target, s_ScePadData& state) {
 	buttons = state.bitmask_buttons & SCE_BM_CROSS ? buttons | 1 << 5 : buttons;
 	buttons = state.bitmask_buttons & SCE_BM_SQUARE ? buttons | 1 << 4 : buttons;
 
-	if (!(state.bitmask_buttons & SCE_BM_N_DPAD) && !(state.bitmask_buttons & SCE_BM_S_DPAD) && !(state.bitmask_buttons & SCE_BM_W_DPAD) && !(state.bitmask_buttons & SCE_BM_E_DPAD))
+	if (!(state.bitmask_buttons & SCE_BM_N_DPAD) && !(state.bitmask_buttons & SCE_BM_S_DPAD) &&
+		!(state.bitmask_buttons & SCE_BM_W_DPAD) && !(state.bitmask_buttons & SCE_BM_E_DPAD))
 		buttons |= 0x8;
 	else {
 		buttons &= ~0xF;
-		if ((state.bitmask_buttons & SCE_BM_S_DPAD) && (state.bitmask_buttons & SCE_BM_W_DPAD)) buttons |= (USHORT)DS4_BUTTON_DPAD_SOUTHWEST;
-		else if (state.bitmask_buttons & SCE_BM_S_DPAD && state.bitmask_buttons & SCE_BM_E_DPAD) buttons |= (USHORT)DS4_BUTTON_DPAD_SOUTHEAST;
-		else if (state.bitmask_buttons & SCE_BM_N_DPAD && state.bitmask_buttons & SCE_BM_E_DPAD) buttons |= (USHORT)DS4_BUTTON_DPAD_NORTHEAST;
-		else if (state.bitmask_buttons & SCE_BM_N_DPAD && state.bitmask_buttons & SCE_BM_W_DPAD) buttons |= (USHORT)DS4_BUTTON_DPAD_NORTHWEST;
-		else if (state.bitmask_buttons & SCE_BM_N_DPAD) buttons |= (USHORT)DS4_BUTTON_DPAD_NORTH;
-		else if (state.bitmask_buttons & SCE_BM_E_DPAD) buttons |= (USHORT)DS4_BUTTON_DPAD_EAST;
-		else if (state.bitmask_buttons & SCE_BM_S_DPAD) buttons |= (USHORT)DS4_BUTTON_DPAD_SOUTH;
-		else if (state.bitmask_buttons & SCE_BM_W_DPAD) buttons |= (USHORT)DS4_BUTTON_DPAD_WEST;
+		if ((state.bitmask_buttons & SCE_BM_S_DPAD) && (state.bitmask_buttons & SCE_BM_W_DPAD))
+			buttons |= (USHORT)DS4_BUTTON_DPAD_SOUTHWEST;
+		else if (state.bitmask_buttons & SCE_BM_S_DPAD && state.bitmask_buttons & SCE_BM_E_DPAD)
+			buttons |= (USHORT)DS4_BUTTON_DPAD_SOUTHEAST;
+		else if (state.bitmask_buttons & SCE_BM_N_DPAD && state.bitmask_buttons & SCE_BM_E_DPAD)
+			buttons |= (USHORT)DS4_BUTTON_DPAD_NORTHEAST;
+		else if (state.bitmask_buttons & SCE_BM_N_DPAD && state.bitmask_buttons & SCE_BM_W_DPAD)
+			buttons |= (USHORT)DS4_BUTTON_DPAD_NORTHWEST;
+		else if (state.bitmask_buttons & SCE_BM_N_DPAD)
+			buttons |= (USHORT)DS4_BUTTON_DPAD_NORTH;
+		else if (state.bitmask_buttons & SCE_BM_E_DPAD)
+			buttons |= (USHORT)DS4_BUTTON_DPAD_EAST;
+		else if (state.bitmask_buttons & SCE_BM_S_DPAD)
+			buttons |= (USHORT)DS4_BUTTON_DPAD_SOUTH;
+		else if (state.bitmask_buttons & SCE_BM_W_DPAD)
+			buttons |= (USHORT)DS4_BUTTON_DPAD_WEST;
 	}
 	report.Report.wButtons = buttons;
 
@@ -105,12 +114,14 @@ void Vigem::UpdateDs4ByTarget(PVIGEM_TARGET Target, s_ScePadData& state) {
 	DS4_TOUCH touch{};
 	touch.bPacketCounter = packetNum;
 
-	touch.bIsUpTrackingNum1 = state.touchData.touch[0].reserve[0] == 0 ? state.touchData.touch[0].id : (state.touchData.touch[0].id | 0x80);
+	touch.bIsUpTrackingNum1 =
+		state.touchData.touch[0].reserve[0] == 0 ? state.touchData.touch[0].id : (state.touchData.touch[0].id | 0x80);
 	touch.bTouchData1[0] = state.touchData.touch[0].x & 0xFF;
 	touch.bTouchData1[1] = state.touchData.touch[0].x >> 8 & 0x0F | state.touchData.touch[0].y << 4 & 0xF0;
 	touch.bTouchData1[2] = state.touchData.touch[0].y >> 4;
 
-	touch.bIsUpTrackingNum2 = state.touchData.touch[1].reserve[0] == 0 ? state.touchData.touch[1].id : (state.touchData.touch[1].id | 0x80);
+	touch.bIsUpTrackingNum2 =
+		state.touchData.touch[1].reserve[0] == 0 ? state.touchData.touch[1].id : (state.touchData.touch[1].id | 0x80);
 	touch.bTouchData2[0] = state.touchData.touch[1].x & 0xFF;
 	touch.bTouchData2[1] = state.touchData.touch[1].x >> 8 & 0x0F | state.touchData.touch[1].y << 4 & 0xF0;
 	touch.bTouchData2[2] = state.touchData.touch[1].y >> 4;
@@ -120,7 +131,7 @@ void Vigem::UpdateDs4ByTarget(PVIGEM_TARGET Target, s_ScePadData& state) {
 	report.Report.wAccelY = state.acceleration.y;
 	report.Report.wAccelZ = state.acceleration.z;
 	report.Report.wGyroX = state.angularVelocity.x;
-	report.Report.wGyroY = state.angularVelocity.z; // needs to be swapped for some reason
+	report.Report.wGyroY = state.angularVelocity.z;  // needs to be swapped for some reason
 	report.Report.wGyroZ = state.angularVelocity.y;
 	report.Report.wTimestamp = state.timestamp / 16;
 
@@ -178,21 +189,24 @@ void Vigem::PlugControllerByIndex(uint32_t index, uint32_t controllerType) {
 #ifdef WINDOWS
 	static uint32_t lastEmulatedController[4] = {};
 
-	if ((EmulatedController)controllerType == EmulatedController::NONE && (EmulatedController)lastEmulatedController[index] != EmulatedController::NONE) {
+	if ((EmulatedController)controllerType == EmulatedController::NONE &&
+		(EmulatedController)lastEmulatedController[index] != EmulatedController::NONE) {
 		vigem_target_remove(m_VigemClient, m_360[index]);
 		vigem_target_remove(m_VigemClient, m_ds4[index]);
 		vigem_target_x360_unregister_notification(m_360[index]);
 		vigem_target_ds4_unregister_notification(m_ds4[index]);
 		lastEmulatedController[index] = (uint32_t)EmulatedController::NONE;
 	}
-	else if ((EmulatedController)controllerType == EmulatedController::XBOX360 && (EmulatedController)lastEmulatedController[index] != EmulatedController::XBOX360) {
+	else if ((EmulatedController)controllerType == EmulatedController::XBOX360 &&
+			 (EmulatedController)lastEmulatedController[index] != EmulatedController::XBOX360) {
 		vigem_target_remove(m_VigemClient, m_ds4[index]);
 		vigem_target_ds4_unregister_notification(m_ds4[index]);
 		vigem_target_add(m_VigemClient, m_360[index]);
 		vigem_target_x360_register_notification(m_VigemClient, m_360[index], xbox360Notification, &m_UserData[index]);
 		lastEmulatedController[index] = (uint32_t)EmulatedController::XBOX360;
 	}
-	else if ((EmulatedController)controllerType == EmulatedController::DUALSHOCK4 && (EmulatedController)lastEmulatedController[index] != EmulatedController::DUALSHOCK4) {
+	else if ((EmulatedController)controllerType == EmulatedController::DUALSHOCK4 &&
+			 (EmulatedController)lastEmulatedController[index] != EmulatedController::DUALSHOCK4) {
 		vigem_target_remove(m_VigemClient, m_360[index]);
 		vigem_target_x360_unregister_notification(m_360[index]);
 		vigem_target_add(m_VigemClient, m_ds4[index]);
@@ -227,8 +241,7 @@ void Vigem::applyInputSettingsToScePadState(s_scePadSettings& settings, s_ScePad
 
 #pragma region Analog deadzone
 	auto applyDeadzone = [&](int deadzone, s_SceStickData& stick) {
-		if (deadzone <= 0)
-			return;
+		if (deadzone <= 0) return;
 
 		float centerX = (stick.X - 128);
 		float centerY = (stick.Y - 128);
@@ -238,7 +251,7 @@ void Vigem::applyInputSettingsToScePadState(s_scePadSettings& settings, s_ScePad
 
 		stick.X = magnitude > deadzone ? stick.X : 128;
 		stick.Y = magnitude > deadzone ? stick.Y : 128;
-		};
+	};
 	applyDeadzone(settings.leftStickDeadzone, state.LeftStick);
 	applyDeadzone(settings.rightStickDeadzone, state.RightStick);
 
@@ -246,9 +259,7 @@ void Vigem::applyInputSettingsToScePadState(s_scePadSettings& settings, s_ScePad
 
 #pragma region Gyro to right stick
 	if (settings.gyroToRightStick && IsHotkeyActive(settings.gyroToRightStickActivationButton, state.bitmask_buttons)) {
-		if (abs(state.RightStick.X - 128) <= 80 &&
-			abs(state.RightStick.Y - 128) <= 80) {
-
+		if (abs(state.RightStick.X - 128) <= 80 && abs(state.RightStick.Y - 128) <= 80) {
 			const float maxVelValue = 1000.0f;
 
 			float normalizedVelX = state.angularVelocity.x / maxVelValue;
@@ -278,8 +289,8 @@ void Vigem::applyInputSettingsToScePadState(s_scePadSettings& settings, s_ScePad
 #pragma region Touchpad as select/start
 	if (settings.TouchpadAsStart && state.bitmask_buttons & SCE_BM_TOUCH) {
 		if ((!state.touchData.touch[0].reserve[0] && state.touchData.touch[0].x >= 1000) ||
-			(state.touchData.touch[0].reserve[0] && !state.touchData.touch[1].reserve[0] && state.touchData.touch[1].x >= 1000)
-			||
+			(state.touchData.touch[0].reserve[0] && !state.touchData.touch[1].reserve[0] &&
+			 state.touchData.touch[1].x >= 1000) ||
 			!settings.TouchpadAsSelect) {
 			state.bitmask_buttons |= SCE_BM_OPTIONS;
 			state.bitmask_buttons &= ~SCE_BM_TOUCH;
@@ -288,8 +299,8 @@ void Vigem::applyInputSettingsToScePadState(s_scePadSettings& settings, s_ScePad
 
 	if (!settings.TouchpadAsSelect && state.bitmask_buttons & SCE_BM_TOUCH) {
 		if ((!state.touchData.touch[0].reserve[0] && state.touchData.touch[0].x <= 1000) ||
-			(state.touchData.touch[0].reserve[0] && !state.touchData.touch[1].reserve[0] && state.touchData.touch[1].x <= 1000) 
-			||
+			(state.touchData.touch[0].reserve[0] && !state.touchData.touch[1].reserve[0] &&
+			 state.touchData.touch[1].x <= 1000) ||
 			!settings.TouchpadAsStart) {
 			state.bitmask_buttons &= ~SCE_BM_TOUCH;
 		}
@@ -310,9 +321,7 @@ void Vigem::EmulatedControllerUpdate() {
 	SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
 	timeBeginPeriod(1);
 
-	EXECUTION_STATE prevState = SetThreadExecutionState(
-		ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_AWAYMODE_REQUIRED
-	);
+	EXECUTION_STATE prevState = SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_AWAYMODE_REQUIRED);
 
 	HANDLE hTimer = CreateWaitableTimerEx(NULL, NULL, CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, TIMER_ALL_ACCESS);
 	LARGE_INTEGER liDueTime;
@@ -320,20 +329,20 @@ void Vigem::EmulatedControllerUpdate() {
 
 	while (m_VigemThreadRunning) {
 		for (uint32_t i = 0; i < 4; i++) {
-
 			if ((EmulatedController)m_ScePadSettings[i].emulatedController != EmulatedController::NONE) {
 				s_ScePadData scePadState = {};
 				uint32_t result = scePadReadState(g_ScePad[i], &scePadState);
 
-				s_scePadSettings settingsToUse = (m_SelectedController == i && m_Udp.IsActive()) ? m_Udp.GetSettings() : m_ScePadSettings[i];
+				s_scePadSettings settingsToUse =
+					(m_SelectedController == i && m_Udp.IsActive()) ? m_Udp.GetSettings() : m_ScePadSettings[i];
 				applyInputSettingsToScePadState(settingsToUse, scePadState);
 
 				if (result == SCE_OK) {
-
 					if ((EmulatedController)m_ScePadSettings[i].emulatedController == EmulatedController::XBOX360) {
 						Update360ByTarget(m_360[i], scePadState);
 					}
-					else if ((EmulatedController)m_ScePadSettings[i].emulatedController == EmulatedController::DUALSHOCK4) {
+					else if ((EmulatedController)m_ScePadSettings[i].emulatedController ==
+							 EmulatedController::DUALSHOCK4) {
 						UpdateDs4ByTarget(m_ds4[i], scePadState);
 					}
 				}
@@ -341,15 +350,18 @@ void Vigem::EmulatedControllerUpdate() {
 		}
 
 		if (auto peerControllers = m_PeerControllers.lock()) {
-			for (auto it = peerControllers->begin(); it != peerControllers->end(); ) {
+			for (auto it = peerControllers->begin(); it != peerControllers->end();) {
 				auto& peer = it->second;
 				auto targetIter = m_PeerControllerTargets.find(it->first);
 
 				if (peer.AllowedToReceive && targetIter == m_PeerControllerTargets.end()) {
-					PVIGEM_TARGET target = peer.Controller == CONTROLLER::XBOX360 ? vigem_target_x360_alloc() : vigem_target_ds4_alloc();
+					PVIGEM_TARGET target =
+						peer.Controller == CONTROLLER::XBOX360 ? vigem_target_x360_alloc() : vigem_target_ds4_alloc();
 					VIGEM_ERROR error = vigem_target_add(m_VigemClient, target);
-					if (peer.Controller == CONTROLLER::XBOX360) vigem_target_x360_register_notification(m_VigemClient, target, x360PeerNotification, &peer);
-					if (peer.Controller == CONTROLLER::DUALSHOCK4) vigem_target_ds4_register_notification(m_VigemClient, target, ds4PeerNotification, &peer);
+					if (peer.Controller == CONTROLLER::XBOX360)
+						vigem_target_x360_register_notification(m_VigemClient, target, x360PeerNotification, &peer);
+					if (peer.Controller == CONTROLLER::DUALSHOCK4)
+						vigem_target_ds4_register_notification(m_VigemClient, target, ds4PeerNotification, &peer);
 					if (error == VIGEM_ERROR_NONE) {
 						m_PeerControllerTargets[it->first] = target;
 						it->second.Disconnected = false;
@@ -364,8 +376,10 @@ void Vigem::EmulatedControllerUpdate() {
 					if (!targetIter->second) continue;
 					VIGEM_ERROR error = vigem_target_remove(m_VigemClient, targetIter->second);
 					if (error == VIGEM_ERROR_NONE) {
-						if (peer.Controller == CONTROLLER::XBOX360) vigem_target_x360_unregister_notification(targetIter->second);
-						else if (peer.Controller == CONTROLLER::DUALSHOCK4) vigem_target_ds4_unregister_notification(targetIter->second);
+						if (peer.Controller == CONTROLLER::XBOX360)
+							vigem_target_x360_unregister_notification(targetIter->second);
+						else if (peer.Controller == CONTROLLER::DUALSHOCK4)
+							vigem_target_ds4_unregister_notification(targetIter->second);
 						vigem_target_free(targetIter->second);
 						m_PeerControllerTargets.erase(targetIter);
 						it->second.AllowedToReceive = false;
@@ -380,9 +394,11 @@ void Vigem::EmulatedControllerUpdate() {
 					continue;
 				}
 
-				s_ScePadData inputState = {  };
-				inputState.LeftStick.X = 128; inputState.LeftStick.Y = 128;
-				inputState.RightStick.X = 128; inputState.RightStick.Y = 128;
+				s_ScePadData inputState = {};
+				inputState.LeftStick.X = 128;
+				inputState.LeftStick.Y = 128;
+				inputState.RightStick.X = 128;
+				inputState.RightStick.Y = 128;
 				{
 					std::lock_guard<std::mutex> inputGuard(peer.Lock);
 					inputState = peer.InputState;
@@ -410,34 +426,55 @@ void Vigem::EmulatedControllerUpdate() {
 #endif
 
 #ifdef WINDOWS
-VOID Vigem::xbox360Notification(PVIGEM_CLIENT Client, PVIGEM_TARGET Target, UCHAR LargeMotor, UCHAR SmallMotor, UCHAR LedNumber, LPVOID UserData) {
+VOID Vigem::xbox360Notification(PVIGEM_CLIENT Client,
+								PVIGEM_TARGET Target,
+								UCHAR LargeMotor,
+								UCHAR SmallMotor,
+								UCHAR LedNumber,
+								LPVOID UserData) {
 	auto* data = static_cast<VigemUserData*>(UserData);
 	if (!data || !data->instance) return;
 	if (!data->instance->m_ScePadSettings) return;
 
-	data->instance->m_ScePadSettings[data->index].rumbleFromEmulatedController = { LargeMotor, SmallMotor };
+	data->instance->m_ScePadSettings[data->index].rumbleFromEmulatedController = {LargeMotor, SmallMotor};
 }
 
-VOID Vigem::ds4Notification(PVIGEM_CLIENT Client, PVIGEM_TARGET Target, UCHAR LargeMotor, UCHAR SmallMotor, DS4_LIGHTBAR_COLOR LightbarColor, LPVOID UserData) {
+VOID Vigem::ds4Notification(PVIGEM_CLIENT Client,
+							PVIGEM_TARGET Target,
+							UCHAR LargeMotor,
+							UCHAR SmallMotor,
+							DS4_LIGHTBAR_COLOR LightbarColor,
+							LPVOID UserData) {
 	auto* data = static_cast<VigemUserData*>(UserData);
 	if (!data || !data->instance) return;
 	if (!data->instance->m_ScePadSettings) return;
 
-	data->instance->m_ScePadSettings[data->index].lightbarFromEmulatedController = { LightbarColor.Red, LightbarColor.Green, LightbarColor.Blue };
-	data->instance->m_ScePadSettings[data->index].rumbleFromEmulatedController = { LargeMotor, SmallMotor };
+	data->instance->m_ScePadSettings[data->index].lightbarFromEmulatedController = {LightbarColor.Red,
+																					LightbarColor.Green,
+																					LightbarColor.Blue};
+	data->instance->m_ScePadSettings[data->index].rumbleFromEmulatedController = {LargeMotor, SmallMotor};
 }
-VOID Vigem::x360PeerNotification(PVIGEM_CLIENT Client, PVIGEM_TARGET Target, UCHAR LargeMotor, UCHAR SmallMotor, UCHAR LedNumber, LPVOID UserData) {
+VOID Vigem::x360PeerNotification(PVIGEM_CLIENT Client,
+								 PVIGEM_TARGET Target,
+								 UCHAR LargeMotor,
+								 UCHAR SmallMotor,
+								 UCHAR LedNumber,
+								 LPVOID UserData) {
 	auto* data = static_cast<PeerControllerData*>(UserData);
 	if (!data) return;
 
-	data->Vibration = { LargeMotor, SmallMotor };
+	data->Vibration = {LargeMotor, SmallMotor};
 }
-VOID Vigem::ds4PeerNotification(PVIGEM_CLIENT Client, PVIGEM_TARGET Target, UCHAR LargeMotor, UCHAR SmallMotor, DS4_LIGHTBAR_COLOR LightbarColor, LPVOID UserData) {
+VOID Vigem::ds4PeerNotification(PVIGEM_CLIENT Client,
+								PVIGEM_TARGET Target,
+								UCHAR LargeMotor,
+								UCHAR SmallMotor,
+								DS4_LIGHTBAR_COLOR LightbarColor,
+								LPVOID UserData) {
 	auto* data = static_cast<PeerControllerData*>(UserData);
 	if (!data) return;
 
-	data->Vibration = { LargeMotor, SmallMotor };
-	data->Lightbar = { LightbarColor.Red, LightbarColor.Green, LightbarColor.Blue };
+	data->Vibration = {LargeMotor, SmallMotor};
+	data->Lightbar = {LightbarColor.Red, LightbarColor.Green, LightbarColor.Blue};
 }
 #endif
-

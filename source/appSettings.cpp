@@ -10,8 +10,7 @@ static inline std::filesystem::path filePath = directory / "Config.json";
 void SaveAppSettings(AppSettings* appSettings) {
 	nlohmann::json j = *appSettings;
 
-	if (!std::filesystem::is_directory(directory))
-		std::filesystem::create_directories(directory);
+	if (!std::filesystem::is_directory(directory)) std::filesystem::create_directories(directory);
 
 	std::ofstream(filePath) << j.dump(4);
 }

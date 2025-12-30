@@ -19,8 +19,7 @@ std::string ReverseUTF8(const std::string& s) {
 void Strings::ReadStringsFromJson(const std::string& path) {
 	using json = nlohmann::json;
 
-	if (!std::filesystem::exists(std::filesystem::path(CountryCodeToFile("en"))))
-		return;
+	if (!std::filesystem::exists(std::filesystem::path(CountryCodeToFile("en")))) return;
 
 	std::ifstream fEn(CountryCodeToFile("en"));
 	json dataOrg = json::parse(fEn);
@@ -35,9 +34,9 @@ void Strings::ReadStringsFromJson(const std::string& path) {
 		json data = json::parse(f);
 
 		for (auto& [key, value] : data.items()) {
-			if(pathToTranslatedJson.stem().string() == "ar")
+			if (pathToTranslatedJson.stem().string() == "ar")
 				m_Strings[key] = ReverseUTF8(value);
-			else	
+			else
 				m_Strings[key] = value;
 		}
 	}
@@ -50,4 +49,3 @@ std::string Strings::GetString(const std::string& key) {
 
 	return "<" + key + ">";
 }
-

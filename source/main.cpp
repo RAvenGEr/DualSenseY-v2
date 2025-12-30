@@ -5,7 +5,6 @@
 #include <shellapi.h>
 #include <iostream>
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow) {
-
 #if (!defined(PRODUCTION_BUILD) || PRODUCTION_BUILD == 0)
 	AllocConsole();
 	FILE* fp;
@@ -35,11 +34,11 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 }
 #else
 int main(int argc, char* argv[]) {
-	#ifdef LINUX
+#ifdef LINUX
 	gtk_disable_setlocale();
 	gtk_init(&argc, &argv);
-	#endif
-	
+#endif
+
 	Application application;
 	application.Run();
 }

@@ -5,4 +5,4 @@
 
 void GetRainbowColor(float t, s_SceLightBar& led);
 
-#endif // LED_H
+#endif  // LED_H

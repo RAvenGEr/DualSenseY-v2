@@ -11,20 +11,21 @@ bool ForwardPort(const char* Port, const char* AppName) {
 	int error = 0;
 	upnp_dev = upnpDiscover(2000, NULL, NULL, 0, 0, 2, &error);
 	// Retrieve a valid Internet Gateway Device
-	int status = UPNP_GetValidIGD(upnp_dev, &upnp_urls, &upnp_data, aLanAddr,
-								  sizeof(aLanAddr), nullptr, 0);
+	int status = UPNP_GetValidIGD(upnp_dev, &upnp_urls, &upnp_data, aLanAddr, sizeof(aLanAddr), nullptr, 0);
 	LOGI("[UPNP] Status=%d, Lan_addr=%s", status, aLanAddr);
 
 	if (status == 1) {
-		error =
-			UPNP_AddPortMapping(upnp_urls.controlURL, upnp_data.first.servicetype,
-								Port, // external port
-								Port, // internal port
-								aLanAddr, AppName, "UDP",
-								0,  // remote host
-								"0" // lease duration, recommended 0 as some NAT
-									// implementations may not support another value
-			);
+		error = UPNP_AddPortMapping(upnp_urls.controlURL,
+									upnp_data.first.servicetype,
+									Port,  // external port
+									Port,  // internal port
+									aLanAddr,
+									AppName,
+									"UDP",
+									0,   // remote host
+									"0"  // lease duration, recommended 0 as some NAT
+										 // implementations may not support another value
+		);
 
 		if (error) {
 			LOGE("[UPNP] Failed to map port");
@@ -55,8 +56,7 @@ bool DeletePort(const char* Port) {
 	LOGI("[UPNP] Status=%d, Lan_addr=%s", status, aLanAddr);
 
 	if (status == 1) {
-		error = UPNP_DeletePortMapping(upnp_urls.controlURL, upnp_data.first.servicetype,
-				   Port, "UDP", 0);
+		error = UPNP_DeletePortMapping(upnp_urls.controlURL, upnp_data.first.servicetype, Port, "UDP", 0);
 
 		if (error != 0) {
 			LOGE("[UPNP] Port map deletion error: %s\n", strupnperror(error));

@@ -33,11 +33,10 @@ Client::~Client() {
 void Client::Connect(const std::string& Ip, uint16_t Port) {
 	m_Connecting = true;
 	m_AwaitingResponseCount++;
-	if (IsConnected())
-		return;
+	if (IsConnected()) return;
 
 	if (!m_Host) {
-		ENetAddress hostAddress = { 0 };
+		ENetAddress hostAddress = {0};
 		hostAddress.host = ENET_HOST_ANY;
 		hostAddress.port = ENET_PORT_ANY;
 		m_Host = enet_host_create(&hostAddress, 100, CHANNEL_COUNT, 0, 0);
@@ -50,7 +49,7 @@ void Client::Connect(const std::string& Ip, uint16_t Port) {
 		return;
 	}
 
-	ENetAddress serverAddress = { 0 };
+	ENetAddress serverAddress = {0};
 	enet_address_set_host(&serverAddress, Ip.c_str());
 	serverAddress.port = Port;
 	m_ServerPeer = enet_host_connect(m_Host, &serverAddress, 2, 0);
@@ -59,8 +58,7 @@ void Client::Connect(const std::string& Ip, uint16_t Port) {
 }
 
 void Client::Start() {
-	if (m_ThreadRunning)
-		return;
+	if (m_ThreadRunning) return;
 
 	m_ThreadRunning = true;
 
@@ -113,8 +111,7 @@ std::string Client::GetLastFetchedScePadSettings() {
 }
 
 void Client::CMD_CHANGE_NICKNAME(SCMD::CMD_CHANGE_NICKNAME* Command) {
-	if (!IsConnected())
-		return;
+	if (!IsConnected()) return;
 
 	ENetPacket* packet = enet_packet_create(Command, sizeof(*Command), ENET_PACKET_FLAG_RELIABLE);
 	enet_peer_send(m_ServerPeer, CHANNEL_REQUEST_RESPONSE, packet);
@@ -123,8 +120,7 @@ void Client::CMD_CHANGE_NICKNAME(SCMD::CMD_CHANGE_NICKNAME* Command) {
 }
 
 void Client::CMD_OPEN_ROOM(std::string Name) {
-	if (!IsConnected())
-		return;
+	if (!IsConnected()) return;
 
 	SCMD::CMD_OPEN_ROOM command = {};
 	std::snprintf(command.Name, sizeof(command.Name), "%s", Name.c_str());
@@ -137,8 +133,7 @@ void Client::CMD_OPEN_ROOM(std::string Name) {
 }
 
 void Client::CMD_JOIN_ROOM(std::string Name) {
-	if (!IsConnected())
-		return;
+	if (!IsConnected()) return;
 
 	SCMD::CMD_JOIN_ROOM command = {};
 	std::snprintf(command.Name, sizeof(command.Name), "%s", Name.c_str());
@@ -151,8 +146,7 @@ void Client::CMD_JOIN_ROOM(std::string Name) {
 }
 
 void Client::CMD_LEAVE_ROOM() {
-	if (!IsConnected())
-		return;
+	if (!IsConnected()) return;
 
 	SCMD::CMD_LEAVE_ROOM command = {};
 
@@ -283,8 +277,7 @@ void Client::PopBackResponseQueue() {
 
 SCMD::CMD_CODE_RESPONSE Client::GetLastResponseInQueue() {
 	std::lock_guard<std::mutex> guard(m_ResponseQueueMutex);
-	if (m_ResponseQueue.empty())
-		return SCMD::CMD_CODE_RESPONSE{};
+	if (m_ResponseQueue.empty()) return SCMD::CMD_CODE_RESPONSE{};
 
 	return m_ResponseQueue.back();
 }
@@ -328,7 +321,7 @@ std::string Client::GetActiveLocalIP() {
 	if (sock >= 0) {
 		sockaddr_in remoteAddr{};
 		remoteAddr.sin_family = AF_INET;
-		remoteAddr.sin_port = htons(53); // DNS port (doesn't matter)
+		remoteAddr.sin_port = htons(53);  // DNS port (doesn't matter)
 		inet_pton(AF_INET, "8.8.8.8", &remoteAddr.sin_addr);
 
 		if (connect(sock, (sockaddr*)&remoteAddr, sizeof(remoteAddr)) == 0) {
@@ -341,12 +334,12 @@ std::string Client::GetActiveLocalIP() {
 			}
 		}
 
-	#ifdef _WIN32
+#ifdef _WIN32
 		closesocket(sock);
 		WSACleanup();
-	#else
+#else
 		close(sock);
-	#endif
+#endif
 	}
 
 	return localIP;
@@ -407,7 +400,6 @@ void Client::HostService() {
 
 			if (evt.type == ENET_EVENT_TYPE_CONNECT) {
 				if (evt.peer == m_ServerPeer) {
-
 					CMD_GET_APP_VERSION();
 
 					if (!sentLocalIp) {
@@ -451,13 +443,11 @@ void Client::HostService() {
 				}
 			}
 			else if (evt.type == ENET_EVENT_TYPE_RECEIVE) {
-				if (evt.packet->dataLength < 1)
-					continue;
+				if (evt.packet->dataLength < 1) continue;
 
 				CMD packetType = (CMD)evt.packet->data[0];
 
 				if (evt.peer == m_ServerPeer) {
-
 					switch (packetType) {
 						case CMD::CMD_RESPONSE:
 						{
@@ -470,14 +460,17 @@ void Client::HostService() {
 								m_ResponseQueue.push_back(response);
 							}
 
-							if ((response.Cmd == CMD::CMD_JOIN_ROOM || response.Cmd == CMD::CMD_OPEN_ROOM) && response.Code == RESPONSE_CODE::E_SUCCESS) {
+							if ((response.Cmd == CMD::CMD_JOIN_ROOM || response.Cmd == CMD::CMD_OPEN_ROOM) &&
+								response.Code == RESPONSE_CODE::E_SUCCESS) {
 								m_IsInRoom = true;
 							}
-							else if ((response.Cmd == CMD::CMD_LEAVE_ROOM) && response.Code == RESPONSE_CODE::E_SUCCESS) {
+							else if ((response.Cmd == CMD::CMD_LEAVE_ROOM) &&
+									 response.Code == RESPONSE_CODE::E_SUCCESS) {
 								m_IsInRoom = false;
 							}
 
-							if ((response.Cmd == CMD::CMD_GET_SCEPADSETTINGS_LIST) && response.Code == RESPONSE_CODE::E_CONFIG_LIST_EMPTY) {
+							if ((response.Cmd == CMD::CMD_GET_SCEPADSETTINGS_LIST) &&
+								response.Code == RESPONSE_CODE::E_CONFIG_LIST_EMPTY) {
 								std::lock_guard<std::mutex> guard(m_CurrentlyFetchedSettingsLock);
 								m_CurrentlyFetchedSettingsList.clear();
 							}
@@ -543,13 +536,13 @@ void Client::HostService() {
 
 						case CMD::CMD_GET_SCEPADSETTINGS_LIST:
 						{
-	
-							SCMD::CMD_GET_SCEPADSETTINGS_LIST* command = reinterpret_cast<SCMD::CMD_GET_SCEPADSETTINGS_LIST*>(evt.packet->data);
-							ScePadSettingsInfo* dataArray = reinterpret_cast<ScePadSettingsInfo*>(evt.packet->data + sizeof(*command));
+							SCMD::CMD_GET_SCEPADSETTINGS_LIST* command =
+								reinterpret_cast<SCMD::CMD_GET_SCEPADSETTINGS_LIST*>(evt.packet->data);
+							ScePadSettingsInfo* dataArray =
+								reinterpret_cast<ScePadSettingsInfo*>(evt.packet->data + sizeof(*command));
 
 							std::lock_guard<std::mutex> guard(m_CurrentlyFetchedSettingsLock);
-							if (command->ReturnedElementsCount > 0) 
-								m_CurrentlyFetchedSettingsList.clear();
+							if (command->ReturnedElementsCount > 0) m_CurrentlyFetchedSettingsList.clear();
 							for (int i = 0; i < command->ReturnedElementsCount; i++) {
 								m_CurrentlyFetchedSettingsList.push_back(dataArray[i]);
 							}
@@ -562,8 +555,8 @@ void Client::HostService() {
 					}
 				}
 				else {
-					//LOGI("Received from peer %d - %s", peerId, CMDToString(packetType).c_str());
-					// Peer
+					// LOGI("Received from peer %d - %s", peerId, CMDToString(packetType).c_str());
+					//  Peer
 					if (packetType == CMD::CMD_PING) {
 						LOGI("CMD_PING received");
 					}
@@ -580,18 +573,21 @@ void Client::HostService() {
 								m_ResponseQueue.push_back(response);
 							}
 
-							if (response.Cmd == CMD::CMD_PEER_REQUEST_VIGEM && response.Code == RESPONSE_CODE::E_SUCCESS) {
+							if (response.Cmd == CMD::CMD_PEER_REQUEST_VIGEM &&
+								response.Code == RESPONSE_CODE::E_SUCCESS) {
 								if (m_PeerControllers) {
 									PeerControllerData& data = (*m_PeerControllers)[peerId];
 									data.AllowedToSend = true;
 								}
 								m_PeerRequestStatus[peerId] = PEER_REQUEST_STATUS::ME_TRANSMITTING_TO_PEER;
 							}
-							else if (response.Cmd == CMD::CMD_PEER_REQUEST_VIGEM && response.Code != RESPONSE_CODE::E_SUCCESS) {
+							else if (response.Cmd == CMD::CMD_PEER_REQUEST_VIGEM &&
+									 response.Code != RESPONSE_CODE::E_SUCCESS) {
 								m_PeerRequestStatus[peerId] = PEER_REQUEST_STATUS::PEER_DECLINED;
 							}
 
-							if (response.Cmd == CMD::CMD_PEER_ABORT_VIGEM && response.Code == RESPONSE_CODE::E_SUCCESS) {
+							if (response.Cmd == CMD::CMD_PEER_ABORT_VIGEM &&
+								response.Code == RESPONSE_CODE::E_SUCCESS) {
 								RemovePeerControllerData(peerId);
 							}
 
@@ -608,7 +604,8 @@ void Client::HostService() {
 								SCMD::CMD_CODE_RESPONSE response = {};
 								response.Cmd = CMD::CMD_PEER_REQUEST_VIGEM;
 								response.Code = RESPONSE_CODE::E_PEER_CANT_EMULATE;
-								ENetPacket* packet = enet_packet_create(&response, sizeof(response), ENET_PACKET_FLAG_RELIABLE);
+								ENetPacket* packet =
+									enet_packet_create(&response, sizeof(response), ENET_PACKET_FLAG_RELIABLE);
 								enet_peer_send(evt.peer, CHANNEL_REQUEST_RESPONSE, packet);
 							}
 
@@ -623,7 +620,9 @@ void Client::HostService() {
 							if ((*m_PeerControllers)[peerId].AllowedToReceive) {
 								SCMD::CMD_PEER_INPUT_STATE command = {};
 								std::memcpy(&command, evt.packet->data, sizeof(command));
-								std::memcpy(&(*m_PeerControllers)[peerId].InputState, &command.InputData, sizeof(s_ScePadData));
+								std::memcpy(&(*m_PeerControllers)[peerId].InputState,
+											&command.InputData,
+											sizeof(s_ScePadData));
 							}
 							break;
 						}
@@ -632,11 +631,19 @@ void Client::HostService() {
 							if ((*m_PeerControllers)[peerId].AllowedToSend) {
 								SCMD::CMD_PEER_GIMMICK_STATE command = {};
 								std::memcpy(&command, evt.packet->data, sizeof(command));
-								std::memcpy(&(*m_PeerControllers)[peerId].Vibration, &command.VibrationParam, sizeof(s_ScePadVibrationParam));
-								std::memcpy(&(*m_PeerControllers)[peerId].Lightbar, &command.Lightbar, sizeof(s_SceLightBar));
-								m_ScePadSettings[m_SelectedController].rumbleFromEmulatedController = command.VibrationParam;
-								m_ScePadSettings[m_SelectedController].lightbarFromEmulatedController = command.Lightbar;
-								//LOGI("Vibration received from peer: %d, %d", m_ScePadSettings[m_SelectedController].rumbleFromEmulatedController.largeMotor, m_ScePadSettings[m_SelectedController].rumbleFromEmulatedController.smallMotor);
+								std::memcpy(&(*m_PeerControllers)[peerId].Vibration,
+											&command.VibrationParam,
+											sizeof(s_ScePadVibrationParam));
+								std::memcpy(&(*m_PeerControllers)[peerId].Lightbar,
+											&command.Lightbar,
+											sizeof(s_SceLightBar));
+								m_ScePadSettings[m_SelectedController].rumbleFromEmulatedController =
+									command.VibrationParam;
+								m_ScePadSettings[m_SelectedController].lightbarFromEmulatedController =
+									command.Lightbar;
+								// LOGI("Vibration received from peer: %d, %d",
+								// m_ScePadSettings[m_SelectedController].rumbleFromEmulatedController.largeMotor,
+								// m_ScePadSettings[m_SelectedController].rumbleFromEmulatedController.smallMotor);
 							}
 							break;
 						}
@@ -653,7 +660,8 @@ void Client::HostService() {
 								settings.leftTriggerThreshold = simpleSettings.leftTriggerThreshold;
 								settings.rightTriggerThreshold = simpleSettings.rightTriggerThreshold;
 								settings.gyroToRightStick = simpleSettings.gyroToRightStick;
-								settings.gyroToRightStickActivationButton = simpleSettings.gyroToRightStickActivationButton;
+								settings.gyroToRightStickActivationButton =
+									simpleSettings.gyroToRightStickActivationButton;
 								settings.gyroToRightStickDeadzone = simpleSettings.gyroToRightStickDeadzone;
 								settings.gyroToRightStickSensitivity = simpleSettings.gyroToRightStickSensitivity;
 								settings.TouchpadAsSelect = simpleSettings.TouchpadAsSelect;
@@ -669,7 +677,8 @@ void Client::HostService() {
 							SCMD::CMD_CODE_RESPONSE response = {};
 							response.Cmd = CMD::CMD_PEER_ABORT_VIGEM;
 							response.Code = RESPONSE_CODE::E_SUCCESS;
-							ENetPacket* packet = enet_packet_create(&response, sizeof(response), ENET_PACKET_FLAG_RELIABLE);
+							ENetPacket* packet =
+								enet_packet_create(&response, sizeof(response), ENET_PACKET_FLAG_RELIABLE);
 							enet_peer_send(evt.peer, CHANNEL_REQUEST_RESPONSE, packet);
 
 							break;
@@ -681,7 +690,8 @@ void Client::HostService() {
 			}
 		}
 
-		static std::chrono::steady_clock::time_point lastTimePeerCountRequest = std::chrono::steady_clock::now() - std::chrono::seconds(30);
+		static std::chrono::steady_clock::time_point lastTimePeerCountRequest =
+			std::chrono::steady_clock::now() - std::chrono::seconds(30);
 		std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
 		if (m_Connected && (now - lastTimePeerCountRequest) > std::chrono::seconds(30)) {
 			CMD_GET_PEER_COUNT();
@@ -696,14 +706,13 @@ void Client::InputStateSendoutService() {
 	SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
 	timeBeginPeriod(1);
 
-	EXECUTION_STATE prevState = SetThreadExecutionState(
-		ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_AWAYMODE_REQUIRED
-	);
+	EXECUTION_STATE prevState = SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_AWAYMODE_REQUIRED);
 
 	HANDLE hTimer = CreateWaitableTimerEx(NULL, NULL, CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, TIMER_ALL_ACCESS);
 	LARGE_INTEGER liDueTime;
 #endif
-	static std::chrono::steady_clock::time_point lastTimeSent = std::chrono::steady_clock::now() - std::chrono::seconds(10); // last time input sent to a peer
+	static std::chrono::steady_clock::time_point lastTimeSent =
+		std::chrono::steady_clock::now() - std::chrono::seconds(10);  // last time input sent to a peer
 	while (m_ThreadRunning) {
 		if (!m_Host) {
 			std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -711,9 +720,11 @@ void Client::InputStateSendoutService() {
 		}
 
 		if (m_SelectedController < 0 || m_SelectedController > 3) return;
-		s_ScePadData InputState = { };
-		InputState.LeftStick.X = 128; InputState.LeftStick.Y = 128;
-		InputState.RightStick.X = 128; InputState.RightStick.Y = 128;
+		s_ScePadData InputState = {};
+		InputState.LeftStick.X = 128;
+		InputState.LeftStick.Y = 128;
+		InputState.RightStick.X = 128;
+		InputState.RightStick.Y = 128;
 		int result = scePadReadState(g_ScePad[m_SelectedController], &InputState);
 
 		for (auto& it : *m_PeerControllers) {
@@ -731,8 +742,10 @@ void Client::InputStateSendoutService() {
 				simpleSettings.gyroToRightStickActivationButton = settings.gyroToRightStickActivationButton;
 				simpleSettings.gyroToRightStickDeadzone = settings.gyroToRightStickDeadzone;
 				simpleSettings.gyroToRightStickSensitivity = settings.gyroToRightStickSensitivity;
-				if ((now - it.second.LastTimeSettingsSent) > std::chrono::seconds(1) && std::memcmp(&it.second.SimpleSettings, &it.second.PrevSimpleSettings, sizeof(s_ScePadSettingsSimple)) != 0) {
-
+				if ((now - it.second.LastTimeSettingsSent) > std::chrono::seconds(1) &&
+					std::memcmp(&it.second.SimpleSettings,
+								&it.second.PrevSimpleSettings,
+								sizeof(s_ScePadSettingsSimple)) != 0) {
 					CMD_PEER_SETTINGS_STATE(it.first, it.second.SimpleSettings);
 					it.second.PrevSimpleSettings = it.second.SimpleSettings;
 					it.second.LastTimeSettingsSent = now;
@@ -743,9 +756,9 @@ void Client::InputStateSendoutService() {
 
 			if (it.second.AllowedToReceive) {
 				if ((now - it.second.LastTimeGimmickSent) > std::chrono::milliseconds(20) &&
-					((std::memcmp(&it.second.Vibration, &it.second.PrevVibration, sizeof(s_ScePadVibrationParam)) != 0) ||
-					(std::memcmp(&it.second.Lightbar, &it.second.PrevLightbar, sizeof(s_SceLightBar)) != 0))) {
-
+					((std::memcmp(&it.second.Vibration, &it.second.PrevVibration, sizeof(s_ScePadVibrationParam)) !=
+					  0) ||
+					 (std::memcmp(&it.second.Lightbar, &it.second.PrevLightbar, sizeof(s_SceLightBar)) != 0))) {
 					CMD_PEER_GIMMICK_STATE(it.first, it.second.Vibration, it.second.Lightbar);
 					it.second.PrevVibration = it.second.Vibration;
 					it.second.PrevLightbar = it.second.Lightbar;
@@ -755,14 +768,15 @@ void Client::InputStateSendoutService() {
 		}
 
 		auto now = std::chrono::steady_clock::now();
-		m_ScePadSettings[m_SelectedController].usingPeerController = ((now - lastTimeSent) < std::chrono::seconds(5)) ? true : false;
-	#ifdef WINDOWS
+		m_ScePadSettings[m_SelectedController].usingPeerController =
+			((now - lastTimeSent) < std::chrono::seconds(5)) ? true : false;
+#ifdef WINDOWS
 		liDueTime.QuadPart = -80000LL;
 		SetWaitableTimer(hTimer, &liDueTime, 0, NULL, NULL, 0);
 		WaitForSingleObject(hTimer, INFINITE);
-	#else
+#else
 		std::this_thread::sleep_for(std::chrono::milliseconds(8));
-	#endif
+#endif
 	}
 }
 
@@ -863,8 +877,8 @@ void Client::RemovePeerControllerData(uint32_t PeerId) {
 }
 
 void PeerRegistry::Add(uint32_t Id, const std::string& Name, ENetPeer* Peer) {
-	m_PeerById[Id] = { Name, Peer };
-	m_PeerByPtr[Peer] = { Name, Id };
+	m_PeerById[Id] = {Name, Peer};
+	m_PeerByPtr[Peer] = {Name, Id};
 	m_PeerIdByStrAddress[GetPeerFullAddress(Peer)] = Id;
 }
 
@@ -900,8 +914,7 @@ std::vector<ENetPeer*> PeerRegistry::GetAllPeers() {
 	std::vector<ENetPeer*> peers;
 	peers.reserve(m_PeerById.size());
 	for (const auto& [id, pair] : m_PeerById) {
-		if (pair.second)
-			peers.push_back(pair.second);
+		if (pair.second) peers.push_back(pair.second);
 	}
 	return peers;
 }
@@ -910,8 +923,7 @@ std::vector<uint32_t> PeerRegistry::GetAllPeerIds() {
 	std::vector<uint32_t> ids;
 	ids.reserve(m_PeerById.size());
 	for (const auto& [id, pair] : m_PeerById) {
-		if (pair.second)
-			ids.push_back(id);
+		if (pair.second) ids.push_back(id);
 	}
 	return ids;
 }

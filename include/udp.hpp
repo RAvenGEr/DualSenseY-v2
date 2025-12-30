@@ -72,12 +72,12 @@ public:
 			deviceArray.push_back(device.to_json());
 		}
 
-		nlohmann::json j = nlohmann::json {
+		nlohmann::json j = nlohmann::json{
 			{"Status", status},
 			{"TimeReceived", timeReceived},
 			{"isControllerConnected", isControllerConnected},
 			{"BatteryLevel", batteryLevel},
-			{"Devices", deviceArray},		
+			{"Devices", deviceArray},
 		};
 
 		return j;
@@ -140,7 +140,7 @@ enum class PlayerLEDNewRevision {
 	Two = 1,
 	Three = 2,
 	Four = 3,
-	Five = 4, // Five is Also All On
+	Five = 4,  // Five is Also All On
 	AllOff = 5
 };
 
@@ -177,7 +177,6 @@ public:
 	std::vector<std::any> parameters;
 
 	void from_json(nlohmann::json& j) {
-
 		type = (InstructionType)j.at("type").get<int>();
 
 		for (auto& parameter : j["parameters"]) {
@@ -190,8 +189,8 @@ public:
 			else if (parameter.is_string()) {
 				std::string str = parameter.get<std::string>();
 
-				bool isNumeric = !str.empty() &&
-					std::all_of(str.begin() + (str[0] == '-' ? 1 : 0), str.end(), ::isdigit);
+				bool isNumeric =
+					!str.empty() && std::all_of(str.begin() + (str[0] == '-' ? 1 : 0), str.end(), ::isdigit);
 
 				if (isNumeric)
 					parameters.push_back(std::stoi(str));
@@ -270,6 +269,7 @@ private:
 	void HandleRgbUpdate(Instruction instruction);
 	void HandleTriggerUpdate(Instruction instruction);
 	void HandleTriggerThresholdUpdate(Instruction instruction);
+
 public:
 	bool IsActive();
 	bool IsAvailable();

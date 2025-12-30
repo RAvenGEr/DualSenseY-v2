@@ -13,9 +13,7 @@
 constexpr auto WIN32_MSG_WINDOW_MUTEX = "DSYMSG";
 
 struct glfwDeleter {
-	void operator()(GLFWwindow* window) {
-		glfwDestroyWindow(window);
-	}
+	void operator()(GLFWwindow* window) { glfwDestroyWindow(window); }
 };
 
 class Application {
@@ -27,7 +25,8 @@ private:
 	AppSettings m_AppSettings = {};
 	static void IconifyCallback(GLFWwindow* window, int iconified);
 	std::unique_ptr<Tray::Tray> m_Tray;
-	std::thread m_TrayThread;         
+	std::thread m_TrayThread;
+
 public:
 	enum class Platform {
 		Windows,
@@ -37,17 +36,17 @@ public:
 	};
 
 	inline Platform GetPlatform() {
-	#if defined(__linux__)
+#if defined(__linux__)
 		return Platform::Linux;
-	#elif defined(__ANDROID__)
+#elif defined(__ANDROID__)
 		return Platform::Android;
-	#elif defined(_WIN32)
+#elif defined(_WIN32)
 		return Platform::Windows;
-	#else
+#else
 		return Platform::Unknown;
-	#endif
+#endif
 	}
-	
+
 	bool Run(const std::string& Argument1 = "");
 	void InitializeWindow();
 	void SetStyleAndColors();
@@ -58,5 +57,4 @@ public:
 	~Application();
 };
 
-
-#endif // APPLICATION_HPP
+#endif  // APPLICATION_HPP

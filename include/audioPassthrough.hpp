@@ -19,10 +19,10 @@ private:
 	ma_device_id m_ControllerId[4];
 	static ma_device m_CaptureDevice;
 	static ma_device m_CaptureDevice3000HzU8;
-	bool m_Active[4] = {false,false,false,false};
-	uint32_t m_Indexes[4] = { 0,1,2,3 };
+	bool m_Active[4] = {false, false, false, false};
+	uint32_t m_Indexes[4] = {0, 1, 2, 3};
 	std::atomic<float> m_CurrentCapturePeak = 0.0f;
-	std::atomic<float> m_HapticIntensity[4] = { 1.0f,1.0f,1.0f,1.0f };
+	std::atomic<float> m_HapticIntensity[4] = {1.0f, 1.0f, 1.0f, 1.0f};
 	uint32_t m_CurrentCaptureDevice = 0;
 	uint32_t m_LastCaptureDevice = 0;
 
@@ -30,9 +30,12 @@ private:
 	void HapticTimerThread();
 
 	friend void CaptureDataCallback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount);
-	friend void PlaybackDualshock4DataCallback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount);
-	friend void PlaybackDualsenseDataCallback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount);
-public:	
+	friend void
+	PlaybackDualshock4DataCallback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount);
+	friend void
+	PlaybackDualsenseDataCallback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount);
+
+public:
 	AudioPassthrough();
 	~AudioPassthrough();
 

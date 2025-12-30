@@ -20,10 +20,10 @@ constexpr auto MAX_CONFIG_NAME_SIZE = 40;
 constexpr auto MAX_CONFIG_SIZE = 8092;
 constexpr auto MAX_DATE_SIZE = 20;
 
-constexpr auto CHANNEL_REQUEST_RESPONSE = 0; // Reliable
-constexpr auto CHANNEL_INPUT = 1; // Unreliable
-constexpr auto CHANNEL_GIMMICK = 2; // Unreliable
-constexpr auto CHANNEL_SETTINGS = 3; // Reliable
+constexpr auto CHANNEL_REQUEST_RESPONSE = 0;  // Reliable
+constexpr auto CHANNEL_INPUT = 1;             // Unreliable
+constexpr auto CHANNEL_GIMMICK = 2;           // Unreliable
+constexpr auto CHANNEL_SETTINGS = 3;          // Reliable
 constexpr auto CHANNEL_COUNT = 4;
 
 enum class CMD : uint8_t {
@@ -54,30 +54,54 @@ enum class CMD : uint8_t {
 
 inline static std::string CMDToString(CMD cmd) {
 	switch (cmd) {
-		case CMD::CMD_UNK:						return "CMD_UNK";
-		case CMD::CMD_RESPONSE:					return "CMD_RESPONSE";
-		case CMD::CMD_GET_SERVTIME:				return "CMD_GET_SERVTIME";
-		case CMD::CMD_CHANGE_NICKNAME:			return "CMD_CHANGE_NICKNAME";
-		case CMD::CMD_OPEN_ROOM:				return "CMD_OPEN_ROOM";
-		case CMD::CMD_JOIN_ROOM:				return "CMD_JOIN_ROOM";
-		case CMD::CMD_ACTIVE_JOIN_ROOM:			return "CMD_ACTIVE_JOIN_ROOM";
-		case CMD::CMD_PING:						return "CMD_PING";
-		case CMD::CMD_PONG:						return "CMD_PONG";
-		case CMD::CMD_GET_PEER_INFO:			return "CMD_GET_PEER_INFO";
-		case CMD::CMD_LEAVE_ROOM:				return "CMD_LEAVE_ROOM";
-		case CMD::CMD_ACTIVE_LEAVE_ROOM:		return "CMD_ACTIVE_LEAVE_ROOM";
-		case CMD::CMD_PEER_REQUEST_VIGEM:		return "CMD_PEER_REQUEST_VIGEM";
-		case CMD::CMD_PEER_ABORT_VIGEM:			return "CMD_PEER_ABORT_VIGEM";
-		case CMD::CMD_SEND_LOCAL_IPANDPORT:		return "CMD_SEND_LOCAL_IPANDPORT";
-		case CMD::CMD_GET_PEER_COUNT:			return "CMD_GET_PEER_COUNT";
-		case CMD::CMD_PEER_INPUT_STATE:			return "CMD_PEER_INPUT_STATE";
-		case CMD::CMD_PEER_GIMMICK_STATE:		return "CMD_PEER_GIMMICK_STATE";
-		case CMD::CMD_PEER_SETTINGS_STATE:		return "CMD_PEER_SETTINGS_STATE";
-		case CMD::CMD_GET_APP_VERSION:			return "CMD_GET_APP_VERSION";
-		case CMD::CMD_SEND_SCEPADSETTINGS:		return "CMD_SEND_SCEPADSETTINGS";
-		case CMD::CMD_GET_SCEPADSETTINGS:		return "CMD_GET_SCEPADSETTINGS";
-		case CMD::CMD_GET_SCEPADSETTINGS_LIST:	return "CMD_GET_SCEPADSETTINGS_LIST";
-		default:								return "UNKNOWN_CMD";
+		case CMD::CMD_UNK:
+			return "CMD_UNK";
+		case CMD::CMD_RESPONSE:
+			return "CMD_RESPONSE";
+		case CMD::CMD_GET_SERVTIME:
+			return "CMD_GET_SERVTIME";
+		case CMD::CMD_CHANGE_NICKNAME:
+			return "CMD_CHANGE_NICKNAME";
+		case CMD::CMD_OPEN_ROOM:
+			return "CMD_OPEN_ROOM";
+		case CMD::CMD_JOIN_ROOM:
+			return "CMD_JOIN_ROOM";
+		case CMD::CMD_ACTIVE_JOIN_ROOM:
+			return "CMD_ACTIVE_JOIN_ROOM";
+		case CMD::CMD_PING:
+			return "CMD_PING";
+		case CMD::CMD_PONG:
+			return "CMD_PONG";
+		case CMD::CMD_GET_PEER_INFO:
+			return "CMD_GET_PEER_INFO";
+		case CMD::CMD_LEAVE_ROOM:
+			return "CMD_LEAVE_ROOM";
+		case CMD::CMD_ACTIVE_LEAVE_ROOM:
+			return "CMD_ACTIVE_LEAVE_ROOM";
+		case CMD::CMD_PEER_REQUEST_VIGEM:
+			return "CMD_PEER_REQUEST_VIGEM";
+		case CMD::CMD_PEER_ABORT_VIGEM:
+			return "CMD_PEER_ABORT_VIGEM";
+		case CMD::CMD_SEND_LOCAL_IPANDPORT:
+			return "CMD_SEND_LOCAL_IPANDPORT";
+		case CMD::CMD_GET_PEER_COUNT:
+			return "CMD_GET_PEER_COUNT";
+		case CMD::CMD_PEER_INPUT_STATE:
+			return "CMD_PEER_INPUT_STATE";
+		case CMD::CMD_PEER_GIMMICK_STATE:
+			return "CMD_PEER_GIMMICK_STATE";
+		case CMD::CMD_PEER_SETTINGS_STATE:
+			return "CMD_PEER_SETTINGS_STATE";
+		case CMD::CMD_GET_APP_VERSION:
+			return "CMD_GET_APP_VERSION";
+		case CMD::CMD_SEND_SCEPADSETTINGS:
+			return "CMD_SEND_SCEPADSETTINGS";
+		case CMD::CMD_GET_SCEPADSETTINGS:
+			return "CMD_GET_SCEPADSETTINGS";
+		case CMD::CMD_GET_SCEPADSETTINGS_LIST:
+			return "CMD_GET_SCEPADSETTINGS_LIST";
+		default:
+			return "UNKNOWN_CMD";
 	}
 }
 
@@ -90,7 +114,7 @@ enum class RESPONSE_CODE : uint8_t {
 	E_SUCCESS,
 	E_PEER_ALREADY_IN_ROOM,
 	E_PEER_UNAVAILABLE,
-	E_PEER_CANT_EMULATE, // Non-windows or no Vigem installed
+	E_PEER_CANT_EMULATE,  // Non-windows or no Vigem installed
 	E_PEER_DECLINE,
 	E_ROOM_FULL,
 	E_ROOM_DOESNT_EXIST,
@@ -106,7 +130,6 @@ enum class RESPONSE_CODE : uint8_t {
 	E_SERVER_LOST_CONNECTION_WITH_DATABASE,
 };
 
-
 enum class PEER_REQUEST_STATUS : uint8_t {
 	PEER_NONE,
 	PEER_TRANSMITING_TO_ME,
@@ -119,8 +142,8 @@ enum class PEER_REQUEST_STATUS : uint8_t {
 #pragma pack(push, 1)
 struct ScePadSettingsInfo {
 	uint32_t Id = 0;
-	char Name[MAX_CONFIG_NAME_SIZE] = { 0 };
-	char UploadDate[MAX_DATE_SIZE] = { 0 };
+	char Name[MAX_CONFIG_NAME_SIZE] = {0};
+	char UploadDate[MAX_DATE_SIZE] = {0};
 	uint32_t DownloadCount = 0;
 };
 #pragma pack(pop)
@@ -136,37 +159,59 @@ enum class LIST_FETCH_SETTING : uint8_t {
 
 inline static std::string ResponseCodeToString(RESPONSE_CODE code) {
 	switch (code) {
-		case RESPONSE_CODE::E_SUCCESS:                               return "E_SUCCESS";
-		case RESPONSE_CODE::E_PEER_ALREADY_IN_ROOM:                  return "E_PEER_ALREADY_IN_ROOM";
-		case RESPONSE_CODE::E_PEER_UNAVAILABLE:                      return "E_PEER_UNAVAILABLE";
-		case RESPONSE_CODE::E_PEER_CANT_EMULATE:                     return "E_PEER_CANT_EMULATE";
-		case RESPONSE_CODE::E_PEER_DECLINE:                          return "E_PEER_DECLINE";
-		case RESPONSE_CODE::E_ROOM_FULL:                             return "E_ROOM_FULL";
-		case RESPONSE_CODE::E_ROOM_DOESNT_EXIST:                     return "E_ROOM_DOESNT_EXIST";
-		case RESPONSE_CODE::E_ROOM_ALREADY_EXISTS:                   return "E_ROOM_ALREADY_EXISTS";
-		case RESPONSE_CODE::E_ROOM_NAME_EMPTY:                       return "E_ROOM_NAME_EMPTY";
-		case RESPONSE_CODE::E_SERVER_ERROR:                          return "E_SERVER_ERROR";
-		case RESPONSE_CODE::E_SERVER_DOESNT_SUPPORT_DATABASE:        return "E_SERVER_DOESNT_SUPPORT_DATABASE";
-		case RESPONSE_CODE::E_CONFIG_ALREADY_EXISTS:                 return "E_CONFIG_ALREADY_EXISTS";
-		case RESPONSE_CODE::E_CONFIG_DOESNT_EXIST:                   return "E_CONFIG_DOESNT_EXIST";
-		case RESPONSE_CODE::E_CONFIG_IS_INVALID:                     return "E_CONFIG_IS_INVALID";
-		case RESPONSE_CODE::E_SERVER_DATABASE_REQUEST_LIMIT_EXCEEDED:return "E_SERVER_DATABASE_REQUEST_LIMIT_EXCEEDED";
-		case RESPONSE_CODE::E_CONFIG_LIST_EMPTY:                     return "E_CONFIG_LIST_EMPTY";
-		case RESPONSE_CODE::E_SERVER_LOST_CONNECTION_WITH_DATABASE:  return "E_CONFIG_LIST_EMPTY";
-		default:													 return "UNKNOWN_RESPONSE_CODE";
+		case RESPONSE_CODE::E_SUCCESS:
+			return "E_SUCCESS";
+		case RESPONSE_CODE::E_PEER_ALREADY_IN_ROOM:
+			return "E_PEER_ALREADY_IN_ROOM";
+		case RESPONSE_CODE::E_PEER_UNAVAILABLE:
+			return "E_PEER_UNAVAILABLE";
+		case RESPONSE_CODE::E_PEER_CANT_EMULATE:
+			return "E_PEER_CANT_EMULATE";
+		case RESPONSE_CODE::E_PEER_DECLINE:
+			return "E_PEER_DECLINE";
+		case RESPONSE_CODE::E_ROOM_FULL:
+			return "E_ROOM_FULL";
+		case RESPONSE_CODE::E_ROOM_DOESNT_EXIST:
+			return "E_ROOM_DOESNT_EXIST";
+		case RESPONSE_CODE::E_ROOM_ALREADY_EXISTS:
+			return "E_ROOM_ALREADY_EXISTS";
+		case RESPONSE_CODE::E_ROOM_NAME_EMPTY:
+			return "E_ROOM_NAME_EMPTY";
+		case RESPONSE_CODE::E_SERVER_ERROR:
+			return "E_SERVER_ERROR";
+		case RESPONSE_CODE::E_SERVER_DOESNT_SUPPORT_DATABASE:
+			return "E_SERVER_DOESNT_SUPPORT_DATABASE";
+		case RESPONSE_CODE::E_CONFIG_ALREADY_EXISTS:
+			return "E_CONFIG_ALREADY_EXISTS";
+		case RESPONSE_CODE::E_CONFIG_DOESNT_EXIST:
+			return "E_CONFIG_DOESNT_EXIST";
+		case RESPONSE_CODE::E_CONFIG_IS_INVALID:
+			return "E_CONFIG_IS_INVALID";
+		case RESPONSE_CODE::E_SERVER_DATABASE_REQUEST_LIMIT_EXCEEDED:
+			return "E_SERVER_DATABASE_REQUEST_LIMIT_EXCEEDED";
+		case RESPONSE_CODE::E_CONFIG_LIST_EMPTY:
+			return "E_CONFIG_LIST_EMPTY";
+		case RESPONSE_CODE::E_SERVER_LOST_CONNECTION_WITH_DATABASE:
+			return "E_CONFIG_LIST_EMPTY";
+		default:
+			return "UNKNOWN_RESPONSE_CODE";
 	}
 }
 
 inline static std::string FetchSettingToString(LIST_FETCH_SETTING setting) {
 	switch (setting) {
-		case LIST_FETCH_SETTING::ID_ASC:			return "ID_ASC";
-		case LIST_FETCH_SETTING::ID_DESC:			return "ID_DESC";
-		case LIST_FETCH_SETTING::RANDOM:			return "RANDOM";
-		case LIST_FETCH_SETTING::DOWNCOUNT_ASC:		return "DOWNCOUNT_ASC";
-		case LIST_FETCH_SETTING::DOWNCOUNT_DESC:	return "DOWNCOUNT_DESC";
+		case LIST_FETCH_SETTING::ID_ASC:
+			return "ID_ASC";
+		case LIST_FETCH_SETTING::ID_DESC:
+			return "ID_DESC";
+		case LIST_FETCH_SETTING::RANDOM:
+			return "RANDOM";
+		case LIST_FETCH_SETTING::DOWNCOUNT_ASC:
+			return "DOWNCOUNT_ASC";
+		case LIST_FETCH_SETTING::DOWNCOUNT_DESC:
+			return "DOWNCOUNT_DESC";
 	}
 }
-
 
 namespace SCMD {
 #pragma pack(push, 1)
@@ -176,24 +221,24 @@ namespace SCMD {
 
 	struct CMD_OPEN_ROOM {
 		CMD Cmd = CMD::CMD_OPEN_ROOM;
-		char Name[MAX_ROOM_NAME_SIZE] = { 0 };
+		char Name[MAX_ROOM_NAME_SIZE] = {0};
 	};
 
 	struct CMD_JOIN_ROOM {
 		CMD Cmd = CMD::CMD_JOIN_ROOM;
-		char Name[MAX_ROOM_NAME_SIZE] = { 0 };
+		char Name[MAX_ROOM_NAME_SIZE] = {0};
 	};
 
 	struct CMD_ACTIVE_JOIN_ROOM {
 		CMD Cmd = CMD::CMD_ACTIVE_JOIN_ROOM;
-		char Name[MAX_NICKNAME_SIZE] = { 0 };
-		ENetAddress Address = { 0 };
+		char Name[MAX_NICKNAME_SIZE] = {0};
+		ENetAddress Address = {0};
 		uint32_t peerId = 0;
 	};
 
 	struct CMD_CHANGE_NICKNAME {
 		CMD Cmd = CMD::CMD_CHANGE_NICKNAME;
-		char Name[MAX_NICKNAME_SIZE] = { 0 };
+		char Name[MAX_NICKNAME_SIZE] = {0};
 	};
 
 	struct CMD_CODE_RESPONSE {
@@ -231,7 +276,7 @@ namespace SCMD {
 
 	struct CMD_SEND_LOCAL_IPANDPORT {
 		CMD Cmd = CMD::CMD_SEND_LOCAL_IPANDPORT;
-		char Ip[MAX_IP_ADDRESS_STRING_SIZE] = { 0 };
+		char Ip[MAX_IP_ADDRESS_STRING_SIZE] = {0};
 		enet_uint16 Port = 0;
 	};
 
@@ -258,19 +303,19 @@ namespace SCMD {
 	struct CMD_GET_APP_VERSION {
 		CMD Cmd = CMD::CMD_GET_APP_VERSION;
 		uint32_t Version = 0;
-		char UpdateUrl[MAX_URL_SIZE] = { 0 };
+		char UpdateUrl[MAX_URL_SIZE] = {0};
 	};
 
 	struct CMD_SEND_SCEPADSETTINGS {
 		CMD Cmd = CMD::CMD_SEND_SCEPADSETTINGS;
-		char ConfigName[MAX_CONFIG_NAME_SIZE] = { 0 };
-		char Config[MAX_CONFIG_SIZE] = { 0 };
+		char ConfigName[MAX_CONFIG_NAME_SIZE] = {0};
+		char Config[MAX_CONFIG_SIZE] = {0};
 	};
 
 	struct CMD_GET_SCEPADSETTINGS {
 		CMD Cmd = CMD::CMD_GET_SCEPADSETTINGS;
-		char ConfigName[MAX_CONFIG_NAME_SIZE] = { 0 };
-		char Config[MAX_CONFIG_SIZE] = { 0 };
+		char ConfigName[MAX_CONFIG_NAME_SIZE] = {0};
+		char Config[MAX_CONFIG_SIZE] = {0};
 	};
 
 	struct CMD_GET_SCEPADSETTINGS_LIST {
@@ -282,7 +327,7 @@ namespace SCMD {
 		ScePadSettingsInfo* Data = nullptr;
 	};
 #pragma pack(pop)
-}
+}  // namespace SCMD
 
 struct PeerControllerData {
 	bool AllowedToSend = false;
@@ -315,6 +360,7 @@ public:
 	std::string GetPeerName(uint32_t Id);
 	uint32_t GetPeerId(ENetPeer* Peer);
 	uint32_t GetPeerByStrAddress(const std::string& Address);
+
 private:
 	std::unordered_map<uint32_t, std::pair<std::string, ENetPeer*>> m_PeerById;
 	std::unordered_map<ENetPeer*, std::pair<std::string, uint32_t>> m_PeerByPtr;
@@ -358,9 +404,10 @@ public:
 	std::string GetActiveLocalIP();
 	std::string GetExternalIP();
 	PEER_REQUEST_STATUS GetRequestStatus(uint32_t PeerId);
-	uint32_t GetGlobalPeerCount(); // This returns count of people connected to the central server, not the room that you're in.
+	uint32_t
+	GetGlobalPeerCount();  // This returns count of people connected to the central server, not the room that you're in.
 	uint32_t GetAppVersion();
-	bool IsUpToDate(); // Returns true if we haven't fetched server app version yet
+	bool IsUpToDate();  // Returns true if we haven't fetched server app version yet
 	std::string GetUpdateUrl();
 	std::vector<ScePadSettingsInfo> GetFetchedScePadSettingsInfos();
 	std::string GetLastFetchedScePadSettings();
@@ -369,6 +416,7 @@ public:
 	std::vector<std::pair<uint32_t, std::string>> GetPeerList();
 	std::shared_ptr<std::unordered_map<uint32_t, PeerControllerData>> GetActivePeerControllerMap();
 	bool AllowedToHostController = false;
+
 private:
 	void HostService();
 	void InputStateSendoutService();
@@ -378,7 +426,7 @@ private:
 	void CMD_PEER_INPUT_STATE(uint32_t PeerId, s_ScePadData InputState);
 	void CMD_PEER_GIMMICK_STATE(uint32_t PeerId, s_ScePadVibrationParam VibrationParam, s_SceLightBar Lightbar);
 	void CMD_PEER_SETTINGS_STATE(uint32_t PeerId, s_ScePadSettingsSimple Settings);
-	void CMD_GET_PEER_COUNT(); // Central server peer count
+	void CMD_GET_PEER_COUNT();  // Central server peer count
 	void CMD_GET_APP_VERSION();
 
 	void RemovePeerControllerData(uint32_t PeerId);

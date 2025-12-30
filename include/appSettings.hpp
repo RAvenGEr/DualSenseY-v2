@@ -51,17 +51,15 @@ struct AppSettings {
 	uint16_t LocalPort = 6969;
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-	AppSettings,
-	DisableAllBluetoothControllersOnExit,
-	DontConnectToServerOnStart,
-	SelectedLanguage,
-	HideToTrayOnMinimize,
-	HideToTrayOnStart,
-	ServerAddress,
-	ServerPort,
-	LocalPort
-);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AppSettings,
+												DisableAllBluetoothControllersOnExit,
+												DontConnectToServerOnStart,
+												SelectedLanguage,
+												HideToTrayOnMinimize,
+												HideToTrayOnStart,
+												ServerAddress,
+												ServerPort,
+												LocalPort);
 
 void SaveAppSettings(AppSettings* appSettings);
 void LoadAppSettings(AppSettings* appSettings);
