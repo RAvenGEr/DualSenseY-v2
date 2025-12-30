@@ -35,7 +35,7 @@ public:
 		Unknown
 	};
 
-	inline Platform GetPlatform() {
+	static constexpr Platform GetPlatform() {
 #if defined(__linux__)
 		return Platform::Linux;
 #elif defined(__ANDROID__)

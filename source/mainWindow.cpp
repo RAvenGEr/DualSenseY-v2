@@ -226,7 +226,7 @@ bool MainWindow::Led(s_scePadSettings& scePadSettings, float scale) {
 	if (scePadSettings.discoMode) {
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(300);
-		ImGui::SliderFloat(cstr("Speed"), &scePadSettings.discoModeSpeed, 0.020, 2.0);
+		ImGui::SliderFloat(cstr("Speed"), &scePadSettings.discoModeSpeed, 0.020f, 2.0);
 	}
 
 	ImGui::Text(cstr("PlayerLedBrightness"));
@@ -250,7 +250,6 @@ bool MainWindow::Led(s_scePadSettings& scePadSettings, float scale) {
 
 bool MainWindow::Audio(int currentController, s_scePadSettings& scePadSettings) {
 	static bool failedToStart = false;
-	int busType = 0;
 
 	ImGui::SeparatorText(cstr("Audio"));
 
@@ -523,7 +522,7 @@ bool MainWindow::AdaptiveTriggers(s_scePadSettings& scePadSettings) {
 					{"Off", "Rigid", "Rigid_A", "Rigid_B", "Rigid_AB", "Pulse", "Pulse_A", "Pulse_B", "Pulse_AB"};
 				int& currentlySelectedCustomTrigger = scePadSettings.uiParameters[currentlySelectedTrigger][0];
 				if (currentlySelectedCustomTrigger > customTriggerList.size())
-					currentlySelectedCustomTrigger = customTriggerList.size() - 1;
+					currentlySelectedCustomTrigger = static_cast<int>(customTriggerList.size()) - 1;
 
 				ImGui::SetNextItemWidth(450);
 				if (ImGui::BeginCombo(cstr("CustomTriggerMode"),
@@ -742,7 +741,7 @@ bool MainWindow::TreeElement_touchpadDiagnostics(int currentController,
 												 s_ScePadData& state,
 												 float scale) {
 	if (ImGui::TreeNodeEx(cstr("Diagnostics"))) {
-		ImVec2 touchpadSize(1.160 * scale, 0.520 * scale);
+		ImVec2 touchpadSize(1.160f * scale, 0.520f * scale);
 		ImGui::InvisibleButton("##touchpad_bg", touchpadSize);
 		ImDrawList* drawList = ImGui::GetWindowDrawList();
 		ImVec2 touchpadPos = ImGui::GetItemRectMin();
@@ -1511,7 +1510,7 @@ bool MainWindow::Emulation(int currentController, s_scePadSettings& scePadSettin
 
 void MainWindow::Show(s_scePadSettings scePadSettings[4], float scale) {
 	static int c = 0;
-	scale = 100 * (scale * 2.5);
+	scale = 100.0f * (scale * 2.5f);
 
 	const ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGui::SetNextWindowPos(viewport->WorkPos);

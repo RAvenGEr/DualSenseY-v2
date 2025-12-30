@@ -272,13 +272,16 @@ private:
 
 public:
 	bool IsActive();
-	bool IsAvailable();
-	bool IsConnectedInsteadOfBinded();
+	bool IsAvailable() const { return m_Available; }
+
+	bool IsConnectedInsteadOfBinded() const { return m_ConnectedInsteadOfBinded; }
+
 	s_scePadSettings GetSettings();
 	void SetVibrationToUdpConfig(s_ScePadVibrationParam vibration);
 	void SendConfigPathToAnotherInstance(const std::string& Path);
 	void BringOtherInstanceToFront();
-	bool SettingsFromOtherInstanceAvailable();
+	bool SettingsFromOtherInstanceAvailable() const { return m_SettingsFromOtherInstanceAvailable; }
+
 	bool AwaitingBringToFront();
 	s_scePadSettings GetSettingsFromOtherInstance();
 	UDP(uint16_t Port);

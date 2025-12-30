@@ -607,7 +607,7 @@ void AudioPassthrough::StartCaptureDevice(ma_device* pDevice, ma_device_config* 
 	}
 
 	pConfig->capture.pDeviceID = &deviceId;
-#endif;
+#endif
 
 	result = ma_device_init(&g_context, pConfig, pDevice);
 	if (result != MA_SUCCESS) {
@@ -626,12 +626,12 @@ AudioPassthrough::AudioPassthrough() {
 	hapticThread.detach();
 }
 
-bool AudioPassthrough::StartByUserId(uint32_t userId) {
+bool AudioPassthrough::StartByUserId(int userId) {
 	assert(userId >= 1 && userId <= 4);
 
 	uint32_t index = userId - 1;
 
-	uint32_t handle = scePadGetHandle(userId, 0, 0);
+	int handle = scePadGetHandle(userId, 0, 0);
 
 	int busType = -1;
 	uint32_t result = scePadGetControllerBusType(handle, &busType);
@@ -646,7 +646,7 @@ bool AudioPassthrough::StartByUserId(uint32_t userId) {
 	if (m_Active[index] && isMaDeviceWorking(&m_Controller[index])) {
 		return false;
 	}
-	else if (m_Active[index] && !isMaDeviceWorking(&m_Controller[index])) {
+	if (m_Active[index] && !isMaDeviceWorking(&m_Controller[index])) {
 		ma_device_uninit(&m_Controller[index]);
 	}
 
@@ -714,12 +714,12 @@ bool AudioPassthrough::StartByUserId(uint32_t userId) {
 	return true;
 }
 
-bool AudioPassthrough::StopByUserId(uint32_t userId) {
+bool AudioPassthrough::StopByUserId(int userId) {
 	assert(userId >= 1 && userId <= 4);
 
 	uint32_t index = userId - 1;
 
-	uint32_t handle = scePadGetHandle(userId, 0, 0);
+	int handle = scePadGetHandle(userId, 0, 0);
 	int busType = -1;
 	uint32_t result = scePadGetControllerBusType(handle, &busType);
 	if (result == SCE_OK && busType == SCE_PAD_BUSTYPE_BT) {
@@ -748,7 +748,7 @@ bool AudioPassthrough::StopByUserId(uint32_t userId) {
 	return true;
 }
 
-void AudioPassthrough::SetHapticIntensityByUserId(uint32_t userId, float intensity) {
+void AudioPassthrough::SetHapticIntensityByUserId(int userId, float intensity) {
 	assert(userId >= 1 && userId <= 4);
 
 	m_HapticIntensity[userId - 1] = intensity;
@@ -758,22 +758,22 @@ float AudioPassthrough::GetCurrentCapturePeak() {
 	return m_CurrentCapturePeak;
 }
 
-void AudioPassthrough::SetCaptureDevice(uint32_t Device) {
+void AudioPassthrough::SetCaptureDevice(int Device) {
 	m_CurrentCaptureDevice = Device;
 }
 
 std::vector<std::string> AudioPassthrough::GetCaptureDeviceList() {
-	static std::vector<std::string> list;
 	ma_device_info* pCapturesInfos;
 	ma_uint32 captureCount;
 	if (ma_context_get_devices(&g_context, nullptr, nullptr, &pCapturesInfos, &captureCount) != MA_SUCCESS) {
-		return std::vector<std::string>();
+		return {};
 	}
 
+	static std::vector<std::string> list;
 	list.clear();
-
+	list.reserve(captureCount);
 	for (ma_uint32 iDevice = 0; iDevice < captureCount; iDevice += 1) {
-		list.push_back(pCapturesInfos[iDevice].name);
+		list.emplace_back(pCapturesInfos[iDevice].name);
 	}
 
 	return list;

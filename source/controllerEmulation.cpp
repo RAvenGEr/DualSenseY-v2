@@ -4,13 +4,14 @@
 #include "controllerHotkey.hpp"
 #include <cmath>
 
-int convertRange(int value, int oldMin, int oldMax, int newMin, int newMax) {
+template <typename I>
+I convertRange(int value, I oldMin, I oldMax, I newMin, I newMax) {
 	if (oldMin == oldMax) {
 		throw std::invalid_argument("Old minimum and maximum cannot be equal.");
 	}
 	float ratio = static_cast<float>(newMax - newMin) / static_cast<float>(oldMax - oldMin);
 	float scaledValue = (value - oldMin) * ratio + newMin;
-	return std::clamp(static_cast<int>(scaledValue), newMin, newMax);
+	return std::clamp(static_cast<I>(scaledValue), newMin, newMax);
 }
 
 #ifdef WINDOWS
@@ -220,7 +221,8 @@ void Vigem::SetSelectedController(uint32_t selectedController) {
 	m_SelectedController = selectedController;
 }
 
-void Vigem::SetPeerControllerDataPointer(std::shared_ptr<std::unordered_map<uint32_t, PeerControllerData>> Pointer) {
+void Vigem::SetPeerControllerDataPointer(
+	const std::shared_ptr<std::unordered_map<uint32_t, PeerControllerData>>& Pointer) {
 #ifdef WINDOWS
 	m_PeerControllers = Pointer;
 #endif
@@ -246,8 +248,6 @@ void Vigem::applyInputSettingsToScePadState(s_scePadSettings& settings, s_ScePad
 		float centerX = (stick.X - 128);
 		float centerY = (stick.Y - 128);
 		float magnitude = sqrt(centerX * centerX + centerY * centerY);
-
-		float deadzoneNorm = deadzone / 128;
 
 		stick.X = magnitude > deadzone ? stick.X : 128;
 		stick.Y = magnitude > deadzone ? stick.Y : 128;

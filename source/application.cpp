@@ -188,7 +188,7 @@ bool Application::Run(const std::string& Argument1) {
 			ImGui_ImplGlfw_NewFrame();
 			ImGui::NewFrame();
 
-			io.FontGlobalScale = xscale + 0.5;
+			io.FontGlobalScale = xscale + 0.5f;
 			finishFrame = true;
 		}
 #pragma endregion

@@ -1,5 +1,6 @@
 #include "udp.hpp"
 #include "log.hpp"
+#include <cstddef>
 #include <duaLib.h>
 #include <iomanip>
 #include "scePadHandle.hpp"
@@ -30,7 +31,7 @@ void UDP::Listen() {
 		asio::ip::udp::endpoint senderEndpoint;
 		try {
 			size_t length = m_Socket.receive_from(asio::buffer(buffer), senderEndpoint);
-			LOGI("[UDP] Received packet with length %d", length);
+			LOGI("[UDP] Received packet with length %zd", length);
 			LOGI("[UDP] Raw packet:\n%s", buffer);
 			nlohmann::json packetJson = nlohmann::json::parse(buffer);
 			Packet packet = {};
@@ -105,10 +106,10 @@ void UDP::Listen() {
 																						 : DeviceType::DUALSHOCK_V2;
 					device.connectionType = (ConnectionType)(busType - 1);
 					device.batteryLevel = 100;
-					device.isSupportAT = controllerType == s_SceControllerType::DUALSENSE ? true : false;
+					device.isSupportAT = controllerType == s_SceControllerType::DUALSENSE;
 					device.isSupportLightBar = true;
-					device.isSupportPlayerLED = controllerType == s_SceControllerType::DUALSENSE ? true : false;
-					device.isSupportMicLED = controllerType == s_SceControllerType::DUALSENSE ? true : false;
+					device.isSupportPlayerLED = controllerType == s_SceControllerType::DUALSENSE;
+					device.isSupportMicLED = controllerType == s_SceControllerType::DUALSENSE;
 
 					response.devices.push_back(device);
 				}
@@ -133,7 +134,7 @@ void UDP::HandleRgbUpdate(Instruction instruction) {
 
 void UDP::HandleTriggerUpdate(Instruction instruction) {
 	if (instruction.parameters.size() < 3) return;
-	uint32_t settingsCount = instruction.parameters.size() - 3;
+	size_t settingsCount = instruction.parameters.size() - 3;
 
 	Trigger trigger = (Trigger)std::any_cast<int>(instruction.parameters[1]);
 	TriggerMode triggerMode = (TriggerMode)std::any_cast<int>(instruction.parameters[2]);
@@ -380,20 +381,8 @@ void UDP::HandleTriggerThresholdUpdate(Instruction instruction) {
 }
 
 bool UDP::IsActive() {
-	if (m_Socket.is_open() && (std::chrono::duration_cast<std::chrono::seconds>(
-								   std::chrono::steady_clock::now() - m_LastUpdate) <= std::chrono::seconds(15))) {
-		return true;
-	}
-
-	return false;
-}
-
-bool UDP::IsAvailable() {
-	return m_Available;
-}
-
-bool UDP::IsConnectedInsteadOfBinded() {
-	return m_ConnectedInsteadOfBinded;
+	return m_Socket.is_open() && (std::chrono::duration_cast<std::chrono::seconds>(
+									  std::chrono::steady_clock::now() - m_LastUpdate) <= std::chrono::seconds(15));
 }
 
 s_scePadSettings UDP::GetSettings() {
@@ -411,8 +400,8 @@ void UDP::SendConfigPathToAnotherInstance(const std::string& Path) {
 	Packet packet{};
 	Instruction instruction{};
 	instruction.type = InstructionType::CONFIG;
-	instruction.parameters.push_back(Path);
-	packet.instructions.push_back(instruction);
+	instruction.parameters.emplace_back(Path);
+	packet.instructions.emplace_back(instruction);
 	m_Socket.send(asio::buffer(packet.to_json().dump()));
 }
 
@@ -423,10 +412,6 @@ void UDP::BringOtherInstanceToFront() {
 	instruction.type = InstructionType::BRING_TO_FRONT;
 	packet.instructions.push_back(instruction);
 	m_Socket.send(asio::buffer(packet.to_json().dump()));
-}
-
-bool UDP::SettingsFromOtherInstanceAvailable() {
-	return m_SettingsFromOtherInstanceAvailable;
 }
 
 bool UDP::AwaitingBringToFront() {
@@ -443,7 +428,7 @@ s_scePadSettings UDP::GetSettingsFromOtherInstance() {
 UDP::UDP(uint16_t Port) : m_Socket(m_IoContext) {
 	try {
 		m_Socket.open(asio::ip::udp::v4());
-		m_Socket.bind(asio::ip::udp::endpoint(asio::ip::udp::v4(), 6969));
+		m_Socket.bind(asio::ip::udp::endpoint(asio::ip::udp::v4(), Port));
 
 		if (m_Socket.is_open()) {
 			m_ListenThread = std::thread(&UDP::Listen, this);
@@ -459,7 +444,7 @@ UDP::UDP(uint16_t Port) : m_Socket(m_IoContext) {
 		LOGE("[UDP] Failed to start");
 		m_Socket.close();
 		m_Socket.open(asio::ip::udp::v4());
-		m_Socket.connect(asio::ip::udp::endpoint(asio::ip::address_v4::loopback(), 6969));
+		m_Socket.connect(asio::ip::udp::endpoint(asio::ip::address_v4::loopback(), Port));
 
 		if (m_Socket.is_open()) {
 			m_ConnectedInsteadOfBinded = true;

@@ -192,7 +192,7 @@ inline static std::string ResponseCodeToString(RESPONSE_CODE code) {
 		case RESPONSE_CODE::E_CONFIG_LIST_EMPTY:
 			return "E_CONFIG_LIST_EMPTY";
 		case RESPONSE_CODE::E_SERVER_LOST_CONNECTION_WITH_DATABASE:
-			return "E_CONFIG_LIST_EMPTY";
+			return "E_SERVER_LOST_CONNECTION_WITH_DATABASE";
 		default:
 			return "UNKNOWN_RESPONSE_CODE";
 	}
@@ -210,7 +210,10 @@ inline static std::string FetchSettingToString(LIST_FETCH_SETTING setting) {
 			return "DOWNCOUNT_ASC";
 		case LIST_FETCH_SETTING::DOWNCOUNT_DESC:
 			return "DOWNCOUNT_DESC";
+		case LIST_FETCH_SETTING::COUNT:
+			return "COUNT";
 	}
+	return "UNKNOWN_SETTING";
 }
 
 namespace SCMD {

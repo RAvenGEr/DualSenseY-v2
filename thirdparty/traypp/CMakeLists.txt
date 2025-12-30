@@ -34,3 +34,6 @@ set_target_properties(tray PROPERTIES
 
 set_target_properties(tray PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(tray PROPERTIES PROJECT_NAME ${PROJECT_NAME})
+if(MSVC)
+target_compile_definitions(tray PRIVATE _CRT_SECURE_NO_WARNINGS=1)
+endif()
