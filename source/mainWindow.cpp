@@ -13,7 +13,6 @@
 #include <filesystem>
 #include <fstream>
 #include "controllerHotkey.hpp"
-#include <process.hpp>
 #include "applicationVersion.hpp"
 #include "dsyFileRegistry.hpp"
 
@@ -828,17 +827,6 @@ bool MainWindow::Online(s_scePadSettings& scePadSettings) {
 
 		if (m_Client.IsConnecting())
 			ImGui::Text(cstr("ConnectingToServer"));
-		else if (!m_Client.IsUpToDate()) {
-			ImGui::Text(cstr("UpdateRequiredToConnectMsg"));
-			if (ImGui::Button(cstr("Update"))) {
-				std::string updateUrl = m_Client.GetUpdateUrl();
-				std::filesystem::path filePath("Updater.exe");
-				if (std::filesystem::exists(filePath) && updateUrl != "") {
-					TinyProcessLib::Process process("Updater.exe --" + updateUrl + " update.zip");
-				}
-				std::exit(0);
-			}
-		}
 		else if (ImGui::Button(cstr("ConnectOnline")))
 			m_Client.Connect(m_AppSettings.ServerAddress, m_AppSettings.ServerPort);
 	}

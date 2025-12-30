@@ -75,7 +75,6 @@ add_subdirectory(thirdparty/miniaudio)
 add_subdirectory(thirdparty/stb_image)
 add_subdirectory(thirdparty/nativefiledialog)
 add_subdirectory(thirdparty/miniupnp/miniupnpc)
-add_subdirectory(thirdparty/Updater)
 add_subdirectory(thirdparty/traypp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
@@ -91,8 +90,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 	nativefiledialog
 	sago::platform_folders
 	libminiupnpc-static
-	tiny-process-library
 	tray
 )
-
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Updater> $<TARGET_FILE_DIR:${PROJECT_NAME}>)
