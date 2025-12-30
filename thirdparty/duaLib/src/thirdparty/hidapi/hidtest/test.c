@@ -24,9 +24,9 @@
 
 // Headers needed for sleeping.
 #ifdef _WIN32
-	#include <windows.h>
+#include <windows.h>
 #else
-	#include <unistd.h>
+#include <unistd.h>
 #endif
 
 // Fallback/example
@@ -52,8 +52,8 @@
 #endif
 //
 
-const char *hid_bus_name(hid_bus_type bus_type) {
-	static const char *const HidBusTypeName[] = {
+const char* hid_bus_name(hid_bus_type bus_type) {
+	static const char* const HidBusTypeName[] = {
 		"Unknown",
 		"USB",
 		"Bluetooth",
@@ -61,27 +61,29 @@ const char *hid_bus_name(hid_bus_type bus_type) {
 		"SPI",
 	};
 
-	if ((int)bus_type < 0)
-		bus_type = HID_API_BUS_UNKNOWN;
-	if ((int)bus_type >= (int)(sizeof(HidBusTypeName) / sizeof(HidBusTypeName[0])))
-		bus_type = HID_API_BUS_UNKNOWN;
+	if ((int)bus_type < 0) bus_type = HID_API_BUS_UNKNOWN;
+	if ((int)bus_type >= (int)(sizeof(HidBusTypeName) / sizeof(HidBusTypeName[0]))) bus_type = HID_API_BUS_UNKNOWN;
 
 	return HidBusTypeName[bus_type];
 }
 
-void print_device(struct hid_device_info *cur_dev) {
-	printf("Device Found\n  type: %04hx %04hx\n  path: %s\n  serial_number: %ls", cur_dev->vendor_id, cur_dev->product_id, cur_dev->path, cur_dev->serial_number);
+void print_device(struct hid_device_info* cur_dev) {
+	printf("Device Found\n  type: %04hx %04hx\n  path: %s\n  serial_number: %ls",
+		   cur_dev->vendor_id,
+		   cur_dev->product_id,
+		   cur_dev->path,
+		   cur_dev->serial_number);
 	printf("\n");
 	printf("  Manufacturer: %ls\n", cur_dev->manufacturer_string);
 	printf("  Product:      %ls\n", cur_dev->product_string);
 	printf("  Release:      %hx\n", cur_dev->release_number);
-	printf("  Interface:    %d\n",  cur_dev->interface_number);
+	printf("  Interface:    %d\n", cur_dev->interface_number);
 	printf("  Usage (page): 0x%hx (0x%hx)\n", cur_dev->usage, cur_dev->usage_page);
 	printf("  Bus type: %u (%s)\n", (unsigned)cur_dev->bus_type, hid_bus_name(cur_dev->bus_type));
 	printf("\n");
 }
 
-void print_hid_report_descriptor_from_device(hid_device *device) {
+void print_hid_report_descriptor_from_device(hid_device* device) {
 	unsigned char descriptor[HID_API_MAX_REPORT_DESCRIPTOR_SIZE];
 	int res = 0;
 
@@ -106,8 +108,8 @@ void print_hid_report_descriptor_from_device(hid_device *device) {
 	printf("\n");
 }
 
-void print_hid_report_descriptor_from_path(const char *path) {
-	hid_device *device = hid_open_path(path);
+void print_hid_report_descriptor_from_path(const char* path) {
+	hid_device* device = hid_open_path(path);
 	if (device) {
 		print_hid_report_descriptor_from_device(device);
 		hid_close(device);
@@ -117,27 +119,26 @@ void print_hid_report_descriptor_from_path(const char *path) {
 	}
 }
 
-void print_devices(struct hid_device_info *cur_dev) {
+void print_devices(struct hid_device_info* cur_dev) {
 	for (; cur_dev; cur_dev = cur_dev->next) {
 		print_device(cur_dev);
 	}
 }
 
-void print_devices_with_descriptor(struct hid_device_info *cur_dev) {
+void print_devices_with_descriptor(struct hid_device_info* cur_dev) {
 	for (; cur_dev; cur_dev = cur_dev->next) {
 		print_device(cur_dev);
 		print_hid_report_descriptor_from_path(cur_dev->path);
 	}
 }
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
 	(void)argc;
 	(void)argv;
 
 	/* --- HIDAPI R&D: this is just to force the compiler to ensure
-	       each of those functions are implemented (even as a stub)
-	       by each backend. --- */
+		   each of those functions are implemented (even as a stub)
+		   by each backend. --- */
 	(void)&hid_open;
 	(void)&hid_open_path;
 	(void)&hid_read_timeout;
@@ -154,14 +155,16 @@ int main(int argc, char* argv[])
 
 	int res;
 	unsigned char buf[256];
-	#define MAX_STR 255
+#define MAX_STR 255
 	wchar_t wstr[MAX_STR];
-	hid_device *handle;
+	hid_device* handle;
 	int i;
 
-	struct hid_device_info *devs;
+	struct hid_device_info* devs;
 
-	printf("hidapi test/example tool. Compiled with hidapi version %s, runtime version %s.\n", HID_API_VERSION_STR, hid_version_str());
+	printf("hidapi test/example tool. Compiled with hidapi version %s, runtime version %s.\n",
+		   HID_API_VERSION_STR,
+		   hid_version_str());
 	if (HID_API_VERSION == HID_API_MAKE_VERSION(hid_version()->major, hid_version()->minor, hid_version()->patch)) {
 		printf("Compile-time version matches runtime version of hidapi.\n\n");
 	}
@@ -169,8 +172,7 @@ int main(int argc, char* argv[])
 		printf("Compile-time version is different than runtime version of hidapi.\n]n");
 	}
 
-	if (hid_init())
-		return -1;
+	if (hid_init()) return -1;
 
 #if defined(__APPLE__) && HID_API_VERSION >= HID_API_MAKE_VERSION(0, 12, 0)
 	// To work properly needs to be called before hid_open/hid_open_path after hid_init.
@@ -183,10 +185,9 @@ int main(int argc, char* argv[])
 	hid_free_enumeration(devs);
 
 	// Set up the command buffer.
-	memset(buf,0x00,sizeof(buf));
+	memset(buf, 0x00, sizeof(buf));
 	buf[0] = 0x01;
 	buf[1] = 0x81;
-
 
 	// Open the device using the VID, PID,
 	// and optionally the Serial number.
@@ -195,7 +196,7 @@ int main(int argc, char* argv[])
 	if (!handle) {
 		printf("unable to open device\n");
 		hid_exit();
- 		return 1;
+		return 1;
 	}
 
 #if defined(_WIN32) && HID_API_VERSION >= HID_API_MAKE_VERSION(0, 15, 0)
@@ -205,22 +206,19 @@ int main(int argc, char* argv[])
 	// Read the Manufacturer String
 	wstr[0] = 0x0000;
 	res = hid_get_manufacturer_string(handle, wstr, MAX_STR);
-	if (res < 0)
-		printf("Unable to read manufacturer string\n");
+	if (res < 0) printf("Unable to read manufacturer string\n");
 	printf("Manufacturer String: %ls\n", wstr);
 
 	// Read the Product String
 	wstr[0] = 0x0000;
 	res = hid_get_product_string(handle, wstr, MAX_STR);
-	if (res < 0)
-		printf("Unable to read product string\n");
+	if (res < 0) printf("Unable to read product string\n");
 	printf("Product String: %ls\n", wstr);
 
 	// Read the Serial Number String
 	wstr[0] = 0x0000;
 	res = hid_get_serial_number_string(handle, wstr, MAX_STR);
-	if (res < 0)
-		printf("Unable to read serial number string\n");
+	if (res < 0) printf("Unable to read serial number string\n");
 	printf("Serial Number String: (%d) %ls\n", wstr[0], wstr);
 
 	print_hid_report_descriptor_from_device(handle);
@@ -228,15 +226,15 @@ int main(int argc, char* argv[])
 	struct hid_device_info* info = hid_get_device_info(handle);
 	if (info == NULL) {
 		printf("Unable to get device info\n");
-	} else {
+	}
+	else {
 		print_devices(info);
 	}
 
 	// Read Indexed String 1
 	wstr[0] = 0x0000;
 	res = hid_get_indexed_string(handle, 1, wstr, MAX_STR);
-	if (res < 0)
-		printf("Unable to read indexed string 1\n");
+	if (res < 0) printf("Unable to read indexed string 1\n");
 	printf("Indexed String 1: %ls\n", wstr);
 
 	// Set the hid_read() function to be non-blocking.
@@ -264,7 +262,7 @@ int main(int argc, char* argv[])
 		printf("Unable to send a feature report: %ls\n", hid_error(handle));
 	}
 
-	memset(buf,0,sizeof(buf));
+	memset(buf, 0, sizeof(buf));
 
 	// Read a Feature Report from the device
 	buf[0] = 0x2;
@@ -276,11 +274,11 @@ int main(int argc, char* argv[])
 		// Print out the returned buffer.
 		printf("Feature Report\n   ");
 		for (i = 0; i < res; i++)
-			printf("%02x ", (unsigned int) buf[i]);
+			printf("%02x ", (unsigned int)buf[i]);
 		printf("\n");
 	}
 
-	memset(buf,0,sizeof(buf));
+	memset(buf, 0, sizeof(buf));
 
 	// Toggle LED (cmd 0x80). The first byte is the report number (0x1).
 	buf[0] = 0x1;
@@ -289,7 +287,6 @@ int main(int argc, char* argv[])
 	if (res < 0) {
 		printf("Unable to write(): %ls\n", hid_error(handle));
 	}
-
 
 	// Request state (cmd 0x81). The first byte is the report number (0x1).
 	buf[0] = 0x1;
@@ -323,7 +320,7 @@ int main(int argc, char* argv[])
 #ifdef _WIN32
 		Sleep(500);
 #else
-		usleep(500*1000);
+		usleep(500 * 1000);
 #endif
 	}
 
@@ -331,7 +328,7 @@ int main(int argc, char* argv[])
 		printf("Data read:\n   ");
 		// Print out the returned buffer.
 		for (i = 0; i < res; i++)
-			printf("%02x ", (unsigned int) buf[i]);
+			printf("%02x ", (unsigned int)buf[i]);
 		printf("\n");
 	}
 

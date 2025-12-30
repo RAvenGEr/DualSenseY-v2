@@ -26,7 +26,7 @@
  * SOFTWARE.
  */
 
-bool TriggerEffectGenerator::Off(uint8_t(&forces)[11], size_t destinationIndex) {
+bool TriggerEffectGenerator::Off(uint8_t (&forces)[11], size_t destinationIndex) {
 	if (destinationIndex + 10 >= 11) return false;
 	forces[destinationIndex + 0] = static_cast<uint8_t>(TriggerEffectType::Off);
 	forces[destinationIndex + 1] = 0x00;
@@ -42,7 +42,10 @@ bool TriggerEffectGenerator::Off(uint8_t(&forces)[11], size_t destinationIndex) 
 	return true;
 }
 
-bool TriggerEffectGenerator::Feedback(uint8_t(&forces)[11], size_t destinationIndex, uint8_t position, uint8_t strength) {
+bool TriggerEffectGenerator::Feedback(uint8_t (&forces)[11],
+									  size_t destinationIndex,
+									  uint8_t position,
+									  uint8_t strength) {
 	if (destinationIndex + 10 >= 11) return false;
 	if (position > 9 || strength > 8) return false;
 	if (strength > 0) {
@@ -69,9 +72,14 @@ bool TriggerEffectGenerator::Feedback(uint8_t(&forces)[11], size_t destinationIn
 	return Off(forces, destinationIndex);
 }
 
-bool TriggerEffectGenerator::Weapon(uint8_t(&forces)[11], size_t destinationIndex, uint8_t startPosition, uint8_t endPosition, uint8_t strength) {
+bool TriggerEffectGenerator::Weapon(uint8_t (&forces)[11],
+									size_t destinationIndex,
+									uint8_t startPosition,
+									uint8_t endPosition,
+									uint8_t strength) {
 	if (destinationIndex + 10 >= 11) return false;
-	if (startPosition > 7 || startPosition < 2 || endPosition > 8 || endPosition <= startPosition || strength > 8) return false;
+	if (startPosition > 7 || startPosition < 2 || endPosition > 8 || endPosition <= startPosition || strength > 8)
+		return false;
 	if (strength > 0) {
 		uint16_t startAndStopZones = static_cast<uint16_t>((1 << startPosition) | (1 << endPosition));
 		forces[destinationIndex + 0] = static_cast<uint8_t>(TriggerEffectType::Weapon);
@@ -90,7 +98,11 @@ bool TriggerEffectGenerator::Weapon(uint8_t(&forces)[11], size_t destinationInde
 	return Off(forces, destinationIndex);
 }
 
-bool TriggerEffectGenerator::Vibration(uint8_t(&forces)[11], size_t destinationIndex, uint8_t position, uint8_t amplitude, uint8_t frequency) {
+bool TriggerEffectGenerator::Vibration(uint8_t (&forces)[11],
+									   size_t destinationIndex,
+									   uint8_t position,
+									   uint8_t amplitude,
+									   uint8_t frequency) {
 	if (destinationIndex + 10 >= 11) return false;
 	if (position > 9 || amplitude > 8) return false;
 	if (amplitude > 0 && frequency > 0) {
@@ -117,7 +129,9 @@ bool TriggerEffectGenerator::Vibration(uint8_t(&forces)[11], size_t destinationI
 	return Off(forces, destinationIndex);
 }
 
-bool TriggerEffectGenerator::MultiplePositionFeedback(uint8_t(&forces)[11], size_t destinationIndex, uint8_t(&strength)[10]) {
+bool TriggerEffectGenerator::MultiplePositionFeedback(uint8_t (&forces)[11],
+													  size_t destinationIndex,
+													  uint8_t (&strength)[10]) {
 	if (destinationIndex + 10 < 11) {
 		uint32_t forceZones = 0;
 		uint16_t activeZones = 0;
@@ -145,9 +159,16 @@ bool TriggerEffectGenerator::MultiplePositionFeedback(uint8_t(&forces)[11], size
 	return Off(forces, destinationIndex);
 }
 
-bool TriggerEffectGenerator::SlopeFeedback(uint8_t(&forces)[11], size_t destinationIndex, uint8_t startPosition, uint8_t endPosition, uint8_t startStrength, uint8_t endStrength) {
+bool TriggerEffectGenerator::SlopeFeedback(uint8_t (&forces)[11],
+										   size_t destinationIndex,
+										   uint8_t startPosition,
+										   uint8_t endPosition,
+										   uint8_t startStrength,
+										   uint8_t endStrength) {
 	if (destinationIndex + 10 >= 11) return false;
-	if (startPosition > 8 || endPosition > 9 || endPosition <= startPosition || startStrength > 8 || startStrength < 1 || endStrength > 8 || endStrength < 1) return false;
+	if (startPosition > 8 || endPosition > 9 || endPosition <= startPosition || startStrength > 8 ||
+		startStrength < 1 || endStrength > 8 || endStrength < 1)
+		return false;
 	uint8_t strength[10];
 	float slope = static_cast<float>(endStrength - startStrength) / static_cast<float>(endPosition - startPosition);
 	for (int i = startPosition; i < 10; i++) {
@@ -161,9 +182,11 @@ bool TriggerEffectGenerator::SlopeFeedback(uint8_t(&forces)[11], size_t destinat
 	return MultiplePositionFeedback(forces, destinationIndex, strength);
 }
 
-bool TriggerEffectGenerator::MultiplePositionVibration(uint8_t(&forces)[11], size_t destinationIndex, uint8_t frequency, uint8_t(&amplitude)[10]) {
-	if (destinationIndex + 10 < 11)
-	{
+bool TriggerEffectGenerator::MultiplePositionVibration(uint8_t (&forces)[11],
+													   size_t destinationIndex,
+													   uint8_t frequency,
+													   uint8_t (&amplitude)[10]) {
+	if (destinationIndex + 10 < 11) {
 		uint32_t strengthZones = 0;
 		uint16_t activeZones = 0;
 		for (int i = 0; i < 10; i++) {
@@ -189,12 +212,19 @@ bool TriggerEffectGenerator::MultiplePositionVibration(uint8_t(&forces)[11], siz
 	return Off(forces, destinationIndex);
 }
 
-bool TriggerEffectGenerator::Bow(uint8_t(&forces)[11], size_t destinationIndex, uint8_t startPosition, uint8_t endPosition, uint8_t strength, uint8_t snapForce) {
+bool TriggerEffectGenerator::Bow(uint8_t (&forces)[11],
+								 size_t destinationIndex,
+								 uint8_t startPosition,
+								 uint8_t endPosition,
+								 uint8_t strength,
+								 uint8_t snapForce) {
 	if (destinationIndex + 10 >= 11) return false;
-	if (startPosition > 8 || endPosition > 8 || startPosition >= endPosition || strength > 8 || snapForce > 8) return false;
+	if (startPosition > 8 || endPosition > 8 || startPosition >= endPosition || strength > 8 || snapForce > 8)
+		return false;
 	if (endPosition > 0 && strength > 0 && snapForce > 0) {
 		uint16_t startAndStopZones = static_cast<uint16_t>((1 << startPosition) | (1 << endPosition));
-		uint32_t forcePair = static_cast<uint32_t>((((strength - 1) & 0x07) << (3 * 0)) | (((snapForce - 1) & 0x07) << (3 * 1)));
+		uint32_t forcePair =
+			static_cast<uint32_t>((((strength - 1) & 0x07) << (3 * 0)) | (((snapForce - 1) & 0x07) << (3 * 1)));
 		forces[destinationIndex + 0] = static_cast<uint8_t>(TriggerEffectType::Bow);
 		forces[destinationIndex + 1] = static_cast<uint8_t>((startAndStopZones >> 0) & 0xff);
 		forces[destinationIndex + 2] = static_cast<uint8_t>((startAndStopZones >> 8) & 0xff);
@@ -211,12 +241,21 @@ bool TriggerEffectGenerator::Bow(uint8_t(&forces)[11], size_t destinationIndex, 
 	return Off(forces, destinationIndex);
 }
 
-bool TriggerEffectGenerator::Galloping(uint8_t(&forces)[11], size_t destinationIndex, uint8_t startPosition, uint8_t endPosition, uint8_t firstFoot, uint8_t secondFoot, uint8_t frequency) {
+bool TriggerEffectGenerator::Galloping(uint8_t (&forces)[11],
+									   size_t destinationIndex,
+									   uint8_t startPosition,
+									   uint8_t endPosition,
+									   uint8_t firstFoot,
+									   uint8_t secondFoot,
+									   uint8_t frequency) {
 	if (destinationIndex + 10 >= 11) return false;
-	if (startPosition > 8 || endPosition > 9 || startPosition >= endPosition || secondFoot > 7 || firstFoot > 6 || firstFoot >= secondFoot) return false;
+	if (startPosition > 8 || endPosition > 9 || startPosition >= endPosition || secondFoot > 7 || firstFoot > 6 ||
+		firstFoot >= secondFoot)
+		return false;
 	if (frequency > 0) {
 		uint16_t startAndStopZones = static_cast<uint16_t>((1 << startPosition) | (1 << endPosition));
-		uint32_t timeAndRatio = static_cast<uint32_t>(((secondFoot & 0x07) << (3 * 0)) | ((firstFoot & 0x07) << (3 * 1)));
+		uint32_t timeAndRatio =
+			static_cast<uint32_t>(((secondFoot & 0x07) << (3 * 0)) | ((firstFoot & 0x07) << (3 * 1)));
 		forces[destinationIndex + 0] = static_cast<uint8_t>(TriggerEffectType::Galloping);
 		forces[destinationIndex + 1] = static_cast<uint8_t>((startAndStopZones >> 0) & 0xff);
 		forces[destinationIndex + 2] = static_cast<uint8_t>((startAndStopZones >> 8) & 0xff);
@@ -233,12 +272,21 @@ bool TriggerEffectGenerator::Galloping(uint8_t(&forces)[11], size_t destinationI
 	return Off(forces, destinationIndex);
 }
 
-bool TriggerEffectGenerator::Machine(uint8_t(&forces)[11], size_t destinationIndex, uint8_t startPosition, uint8_t endPosition, uint8_t amplitudeA, uint8_t amplitudeB, uint8_t frequency, uint8_t period) {
+bool TriggerEffectGenerator::Machine(uint8_t (&forces)[11],
+									 size_t destinationIndex,
+									 uint8_t startPosition,
+									 uint8_t endPosition,
+									 uint8_t amplitudeA,
+									 uint8_t amplitudeB,
+									 uint8_t frequency,
+									 uint8_t period) {
 	if (destinationIndex + 10 >= 11) return false;
-	if (startPosition > 8 || endPosition > 9 || endPosition <= startPosition || amplitudeA > 7 || amplitudeB > 7) return false;
+	if (startPosition > 8 || endPosition > 9 || endPosition <= startPosition || amplitudeA > 7 || amplitudeB > 7)
+		return false;
 	if (frequency > 0) {
 		uint16_t startAndStopZones = static_cast<uint16_t>((1 << startPosition) | (1 << endPosition));
-		uint32_t strengthPair = static_cast<uint32_t>(((amplitudeA & 0x07) << (3 * 0)) | ((amplitudeB & 0x07) << (3 * 1)));
+		uint32_t strengthPair =
+			static_cast<uint32_t>(((amplitudeA & 0x07) << (3 * 0)) | ((amplitudeB & 0x07) << (3 * 1)));
 		forces[destinationIndex + 0] = static_cast<uint8_t>(TriggerEffectType::Machine);
 		forces[destinationIndex + 1] = static_cast<uint8_t>((startAndStopZones >> 0) & 0xff);
 		forces[destinationIndex + 2] = static_cast<uint8_t>((startAndStopZones >> 8) & 0xff);
@@ -255,7 +303,10 @@ bool TriggerEffectGenerator::Machine(uint8_t(&forces)[11], size_t destinationInd
 	return Off(forces, destinationIndex);
 }
 
-bool TriggerEffectGenerator::Simple_Feedback(uint8_t(&forces)[11], size_t destinationIndex, uint8_t position, uint8_t strength) {
+bool TriggerEffectGenerator::Simple_Feedback(uint8_t (&forces)[11],
+											 size_t destinationIndex,
+											 uint8_t position,
+											 uint8_t strength) {
 	if (destinationIndex + 10 >= 11) return false;
 	forces[destinationIndex + 0] = static_cast<uint8_t>(TriggerEffectType::Simple_Feedback);
 	forces[destinationIndex + 1] = position;
@@ -271,7 +322,11 @@ bool TriggerEffectGenerator::Simple_Feedback(uint8_t(&forces)[11], size_t destin
 	return true;
 }
 
-bool TriggerEffectGenerator::Simple_Weapon(uint8_t(&forces)[11], size_t destinationIndex, uint8_t startPosition, uint8_t endPosition, uint8_t strength) {
+bool TriggerEffectGenerator::Simple_Weapon(uint8_t (&forces)[11],
+										   size_t destinationIndex,
+										   uint8_t startPosition,
+										   uint8_t endPosition,
+										   uint8_t strength) {
 	if (destinationIndex + 10 >= 11) return false;
 	forces[destinationIndex + 0] = static_cast<uint8_t>(TriggerEffectType::Simple_Weapon);
 	forces[destinationIndex + 1] = startPosition;
@@ -287,7 +342,11 @@ bool TriggerEffectGenerator::Simple_Weapon(uint8_t(&forces)[11], size_t destinat
 	return true;
 }
 
-bool TriggerEffectGenerator::Simple_Vibration(uint8_t(&forces)[11], size_t destinationIndex, uint8_t position, uint8_t amplitude, uint8_t frequency) {
+bool TriggerEffectGenerator::Simple_Vibration(uint8_t (&forces)[11],
+											  size_t destinationIndex,
+											  uint8_t position,
+											  uint8_t amplitude,
+											  uint8_t frequency) {
 	if (destinationIndex + 10 >= 11) return false;
 	if (frequency > 0 && amplitude > 0) {
 		forces[destinationIndex + 0] = static_cast<uint8_t>(TriggerEffectType::Simple_Vibration);
@@ -306,7 +365,10 @@ bool TriggerEffectGenerator::Simple_Vibration(uint8_t(&forces)[11], size_t desti
 	return Off(forces, destinationIndex);
 }
 
-bool TriggerEffectGenerator::Limited_Feedback(uint8_t(&forces)[11], size_t destinationIndex, uint8_t position, uint8_t strength) {
+bool TriggerEffectGenerator::Limited_Feedback(uint8_t (&forces)[11],
+											  size_t destinationIndex,
+											  uint8_t position,
+											  uint8_t strength) {
 	if (destinationIndex + 10 >= 11) return false;
 	if (strength > 10) return false;
 	if (strength > 0) {
@@ -326,9 +388,14 @@ bool TriggerEffectGenerator::Limited_Feedback(uint8_t(&forces)[11], size_t desti
 	return Off(forces, destinationIndex);
 }
 
-bool TriggerEffectGenerator::Limited_Weapon(uint8_t(&forces)[11], size_t destinationIndex, uint8_t startPosition, uint8_t endPosition, uint8_t strength) {
+bool TriggerEffectGenerator::Limited_Weapon(uint8_t (&forces)[11],
+											size_t destinationIndex,
+											uint8_t startPosition,
+											uint8_t endPosition,
+											uint8_t strength) {
 	if (destinationIndex + 10 >= 11) return false;
-	if (startPosition < 0x10 || endPosition < startPosition || (startPosition + 100) < endPosition || strength > 10) return false;
+	if (startPosition < 0x10 || endPosition < startPosition || (startPosition + 100) < endPosition || strength > 10)
+		return false;
 	if (strength > 0) {
 		forces[destinationIndex + 0] = static_cast<uint8_t>(TriggerEffectType::Limited_Weapon);
 		forces[destinationIndex + 1] = startPosition;
@@ -347,31 +414,44 @@ bool TriggerEffectGenerator::Limited_Weapon(uint8_t(&forces)[11], size_t destina
 }
 
 // Apple class implementations
-bool TriggerEffectGenerator::Apple::SetModeOff(uint8_t(&forces)[11], size_t destinationIndex) {
+bool TriggerEffectGenerator::Apple::SetModeOff(uint8_t (&forces)[11], size_t destinationIndex) {
 	return TriggerEffectGenerator::Off(forces, destinationIndex);
 }
 
-bool TriggerEffectGenerator::Apple::SetModeFeedbackWithStartPosition(uint8_t(&forces)[11], size_t destinationIndex, float startPosition, float resistiveStrength) {
+bool TriggerEffectGenerator::Apple::SetModeFeedbackWithStartPosition(uint8_t (&forces)[11],
+																	 size_t destinationIndex,
+																	 float startPosition,
+																	 float resistiveStrength) {
 	uint8_t pos = static_cast<uint8_t>(std::round(startPosition * 9.0f));
 	uint8_t str = static_cast<uint8_t>(std::round(resistiveStrength * 8.0f));
 	return TriggerEffectGenerator::Feedback(forces, destinationIndex, pos, str);
 }
 
-bool TriggerEffectGenerator::Apple::SetModeWeaponWithStartPosition(uint8_t(&forces)[11], size_t destinationIndex, float startPosition, float endPosition, float resistiveStrength) {
+bool TriggerEffectGenerator::Apple::SetModeWeaponWithStartPosition(uint8_t (&forces)[11],
+																   size_t destinationIndex,
+																   float startPosition,
+																   float endPosition,
+																   float resistiveStrength) {
 	uint8_t start = static_cast<uint8_t>(std::round(startPosition * 9.0f));
 	uint8_t end = static_cast<uint8_t>(std::round(endPosition * 9.0f));
 	uint8_t str = static_cast<uint8_t>(std::round(resistiveStrength * 8.0f));
 	return TriggerEffectGenerator::Weapon(forces, destinationIndex, start, end, str);
 }
 
-bool TriggerEffectGenerator::Apple::SetModeVibrationWithStartPosition(uint8_t(&forces)[11], size_t destinationIndex, float startPosition, float amplitude, float frequency) {
+bool TriggerEffectGenerator::Apple::SetModeVibrationWithStartPosition(uint8_t (&forces)[11],
+																	  size_t destinationIndex,
+																	  float startPosition,
+																	  float amplitude,
+																	  float frequency) {
 	uint8_t pos = static_cast<uint8_t>(std::round(startPosition * 9.0f));
 	uint8_t amp = static_cast<uint8_t>(std::round(amplitude * 8.0f));
 	uint8_t freq = static_cast<uint8_t>(std::round(frequency * 255.0f));
 	return TriggerEffectGenerator::Vibration(forces, destinationIndex, pos, amp, freq);
 }
 
-bool TriggerEffectGenerator::Apple::SetModeFeedback(uint8_t(&forces)[11], size_t destinationIndex, const std::array<float, 10>& positionalResistiveStrengths) {
+bool TriggerEffectGenerator::Apple::SetModeFeedback(uint8_t (&forces)[11],
+													size_t destinationIndex,
+													const std::array<float, 10>& positionalResistiveStrengths) {
 	uint8_t force[10];
 	for (size_t i = 0; i < 10; i++) {
 		force[i] = static_cast<uint8_t>(std::round(positionalResistiveStrengths[i] * 8.0f));
@@ -379,7 +459,12 @@ bool TriggerEffectGenerator::Apple::SetModeFeedback(uint8_t(&forces)[11], size_t
 	return TriggerEffectGenerator::MultiplePositionFeedback(forces, destinationIndex, force);
 }
 
-bool TriggerEffectGenerator::Apple::SetModeSlopeFeedback(uint8_t(&forces)[11], size_t destinationIndex, float startPosition, float endPosition, float startStrength, float endStrength) {
+bool TriggerEffectGenerator::Apple::SetModeSlopeFeedback(uint8_t (&forces)[11],
+														 size_t destinationIndex,
+														 float startPosition,
+														 float endPosition,
+														 float startStrength,
+														 float endStrength) {
 	uint8_t startPos = static_cast<uint8_t>(std::round(startPosition * 9.0f));
 	uint8_t endPos = static_cast<uint8_t>(std::round(endPosition * 9.0f));
 	uint8_t startStr = static_cast<uint8_t>(std::round(startStrength * 8.0f));
@@ -387,7 +472,10 @@ bool TriggerEffectGenerator::Apple::SetModeSlopeFeedback(uint8_t(&forces)[11], s
 	return TriggerEffectGenerator::SlopeFeedback(forces, destinationIndex, startPos, endPos, startStr, endStr);
 }
 
-bool TriggerEffectGenerator::Apple::SetModeVibration(uint8_t(&forces)[11], size_t destinationIndex, const std::array<float, 10>& positionalAmplitudes, float frequency) {
+bool TriggerEffectGenerator::Apple::SetModeVibration(uint8_t (&forces)[11],
+													 size_t destinationIndex,
+													 const std::array<float, 10>& positionalAmplitudes,
+													 float frequency) {
 	uint8_t strength[10];
 	for (size_t i = 0; i < 10; i++) {
 		strength[i] = static_cast<uint8_t>(std::round(positionalAmplitudes[i] * 8.0f));
@@ -397,27 +485,27 @@ bool TriggerEffectGenerator::Apple::SetModeVibration(uint8_t(&forces)[11], size_
 }
 
 // ReWASD class implementations
-bool TriggerEffectGenerator::ReWASD::FullPress(uint8_t(&forces)[11], size_t destinationIndex) {
+bool TriggerEffectGenerator::ReWASD::FullPress(uint8_t (&forces)[11], size_t destinationIndex) {
 	return TriggerEffectGenerator::Simple_Weapon(forces, destinationIndex, 0x90, 0xa0, 0xff);
 }
 
-bool TriggerEffectGenerator::ReWASD::SoftPress(uint8_t(&forces)[11], size_t destinationIndex) {
+bool TriggerEffectGenerator::ReWASD::SoftPress(uint8_t (&forces)[11], size_t destinationIndex) {
 	return TriggerEffectGenerator::Simple_Weapon(forces, destinationIndex, 0x70, 0xa0, 0xff);
 }
 
-bool TriggerEffectGenerator::ReWASD::MediumPress(uint8_t(&forces)[11], size_t destinationIndex) {
+bool TriggerEffectGenerator::ReWASD::MediumPress(uint8_t (&forces)[11], size_t destinationIndex) {
 	return TriggerEffectGenerator::Simple_Weapon(forces, destinationIndex, 0x45, 0xa0, 0xff);
 }
 
-bool TriggerEffectGenerator::ReWASD::HardPress(uint8_t(&forces)[11], size_t destinationIndex) {
+bool TriggerEffectGenerator::ReWASD::HardPress(uint8_t (&forces)[11], size_t destinationIndex) {
 	return TriggerEffectGenerator::Simple_Weapon(forces, destinationIndex, 0x20, 0xa0, 0xff);
 }
 
-bool TriggerEffectGenerator::ReWASD::Pulse(uint8_t(&forces)[11], size_t destinationIndex) {
+bool TriggerEffectGenerator::ReWASD::Pulse(uint8_t (&forces)[11], size_t destinationIndex) {
 	return TriggerEffectGenerator::Simple_Weapon(forces, destinationIndex, 0x00, 0x00, 0x00);
 }
 
-bool TriggerEffectGenerator::ReWASD::Choppy(uint8_t(&forces)[11], size_t destinationIndex) {
+bool TriggerEffectGenerator::ReWASD::Choppy(uint8_t (&forces)[11], size_t destinationIndex) {
 	if (destinationIndex + 10 >= 11) return false;
 	forces[destinationIndex + 0] = static_cast<uint8_t>(TriggerEffectType::Feedback);
 	forces[destinationIndex + 1] = 0x02;
@@ -433,23 +521,23 @@ bool TriggerEffectGenerator::ReWASD::Choppy(uint8_t(&forces)[11], size_t destina
 	return true;
 }
 
-bool TriggerEffectGenerator::ReWASD::SoftRigidity(uint8_t(&forces)[11], size_t destinationIndex) {
+bool TriggerEffectGenerator::ReWASD::SoftRigidity(uint8_t (&forces)[11], size_t destinationIndex) {
 	return TriggerEffectGenerator::Simple_Feedback(forces, destinationIndex, 0x00, 0x00);
 }
 
-bool TriggerEffectGenerator::ReWASD::MediumRigidity(uint8_t(&forces)[11], size_t destinationIndex) {
+bool TriggerEffectGenerator::ReWASD::MediumRigidity(uint8_t (&forces)[11], size_t destinationIndex) {
 	return TriggerEffectGenerator::Simple_Feedback(forces, destinationIndex, 0x00, 0x64);
 }
 
-bool TriggerEffectGenerator::ReWASD::MaxRigidity(uint8_t(&forces)[11], size_t destinationIndex) {
+bool TriggerEffectGenerator::ReWASD::MaxRigidity(uint8_t (&forces)[11], size_t destinationIndex) {
 	return TriggerEffectGenerator::Simple_Feedback(forces, destinationIndex, 0x00, 0xdc);
 }
 
-bool TriggerEffectGenerator::ReWASD::HalfPress(uint8_t(&forces)[11], size_t destinationIndex) {
+bool TriggerEffectGenerator::ReWASD::HalfPress(uint8_t (&forces)[11], size_t destinationIndex) {
 	return TriggerEffectGenerator::Simple_Feedback(forces, destinationIndex, 0x55, 0x64);
 }
 
-bool TriggerEffectGenerator::ReWASD::Rifle(uint8_t(&forces)[11], size_t destinationIndex, uint8_t frequency) {
+bool TriggerEffectGenerator::ReWASD::Rifle(uint8_t (&forces)[11], size_t destinationIndex, uint8_t frequency) {
 	if (destinationIndex + 10 >= 11) return false;
 	if (frequency < 2 || frequency > 20) return false;
 	forces[destinationIndex + 0] = static_cast<uint8_t>(TriggerEffectType::Vibration);
@@ -466,7 +554,10 @@ bool TriggerEffectGenerator::ReWASD::Rifle(uint8_t(&forces)[11], size_t destinat
 	return true;
 }
 
-bool TriggerEffectGenerator::ReWASD::Vibration(uint8_t(&forces)[11], size_t destinationIndex, uint8_t strength, uint8_t frequency) {
+bool TriggerEffectGenerator::ReWASD::Vibration(uint8_t (&forces)[11],
+											   size_t destinationIndex,
+											   uint8_t strength,
+											   uint8_t frequency) {
 	if (destinationIndex + 10 >= 11) return false;
 	if (strength < 1 || frequency < 1) return false;
 	forces[destinationIndex + 0] = static_cast<uint8_t>(TriggerEffectType::Vibration);

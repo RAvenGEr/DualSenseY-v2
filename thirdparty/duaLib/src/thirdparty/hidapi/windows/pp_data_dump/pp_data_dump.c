@@ -1,6 +1,6 @@
 #if defined(__MINGW32__)
-	// Needed for %hh
-	#define __USE_MINGW_ANSI_STDIO 1
+// Needed for %hh
+#define __USE_MINGW_ANSI_STDIO 1
 #endif
 
 #include <hid.c>
@@ -32,47 +32,133 @@ void dump_hid_pp_cap(FILE* file, phid_pp_cap pp_cap, unsigned int cap_idx) {
 	fprintf(file, "pp_data->cap[%u]->IsStringRange                = %hhu\n", cap_idx, pp_cap->IsStringRange);
 	fprintf(file, "pp_data->cap[%u]->IsDesignatorRange            = %hhu\n", cap_idx, pp_cap->IsDesignatorRange);
 
-	fprintf(file, "pp_data->cap[%u]->Reserved1                    = 0x%02hhX%02hhX%02hhX\n", cap_idx, pp_cap->Reserved1[0], pp_cap->Reserved1[1], pp_cap->Reserved1[2]);
+	fprintf(file,
+			"pp_data->cap[%u]->Reserved1                    = 0x%02hhX%02hhX%02hhX\n",
+			cap_idx,
+			pp_cap->Reserved1[0],
+			pp_cap->Reserved1[1],
+			pp_cap->Reserved1[2]);
 
 	for (int token_idx = 0; token_idx < 4; token_idx++) {
-		fprintf(file, "pp_data->cap[%u]->pp_cap->UnknownTokens[%d].Token    = 0x%02hhX\n", cap_idx, token_idx, pp_cap->UnknownTokens[token_idx].Token);
-		fprintf(file, "pp_data->cap[%u]->pp_cap->UnknownTokens[%d].Reserved = 0x%02hhX%02hhX%02hhX\n", cap_idx, token_idx, pp_cap->UnknownTokens[token_idx].Reserved[0], pp_cap->UnknownTokens[token_idx].Reserved[1], pp_cap->UnknownTokens[token_idx].Reserved[2]);
-		fprintf(file, "pp_data->cap[%u]->pp_cap->UnknownTokens[%d].BitField = 0x%08lX\n", cap_idx, token_idx, pp_cap->UnknownTokens[token_idx].BitField);
+		fprintf(file,
+				"pp_data->cap[%u]->pp_cap->UnknownTokens[%d].Token    = 0x%02hhX\n",
+				cap_idx,
+				token_idx,
+				pp_cap->UnknownTokens[token_idx].Token);
+		fprintf(file,
+				"pp_data->cap[%u]->pp_cap->UnknownTokens[%d].Reserved = 0x%02hhX%02hhX%02hhX\n",
+				cap_idx,
+				token_idx,
+				pp_cap->UnknownTokens[token_idx].Reserved[0],
+				pp_cap->UnknownTokens[token_idx].Reserved[1],
+				pp_cap->UnknownTokens[token_idx].Reserved[2]);
+		fprintf(file,
+				"pp_data->cap[%u]->pp_cap->UnknownTokens[%d].BitField = 0x%08lX\n",
+				cap_idx,
+				token_idx,
+				pp_cap->UnknownTokens[token_idx].BitField);
 	}
 
 	if (pp_cap->IsRange) {
-		fprintf(file, "pp_data->cap[%u]->Range.UsageMin                     = 0x%04hX\n", cap_idx, pp_cap->Range.UsageMin);
-		fprintf(file, "pp_data->cap[%u]->Range.UsageMax                     = 0x%04hX\n", cap_idx, pp_cap->Range.UsageMax);
+		fprintf(file,
+				"pp_data->cap[%u]->Range.UsageMin                     = 0x%04hX\n",
+				cap_idx,
+				pp_cap->Range.UsageMin);
+		fprintf(file,
+				"pp_data->cap[%u]->Range.UsageMax                     = 0x%04hX\n",
+				cap_idx,
+				pp_cap->Range.UsageMax);
 		fprintf(file, "pp_data->cap[%u]->Range.StringMin                    = %hu\n", cap_idx, pp_cap->Range.StringMin);
 		fprintf(file, "pp_data->cap[%u]->Range.StringMax                    = %hu\n", cap_idx, pp_cap->Range.StringMax);
-		fprintf(file, "pp_data->cap[%u]->Range.DesignatorMin                = %hu\n", cap_idx, pp_cap->Range.DesignatorMin);
-		fprintf(file, "pp_data->cap[%u]->Range.DesignatorMax                = %hu\n", cap_idx, pp_cap->Range.DesignatorMax);
-		fprintf(file, "pp_data->cap[%u]->Range.DataIndexMin                 = %hu\n", cap_idx, pp_cap->Range.DataIndexMin);
-		fprintf(file, "pp_data->cap[%u]->Range.DataIndexMax                 = %hu\n", cap_idx, pp_cap->Range.DataIndexMax);
+		fprintf(file,
+				"pp_data->cap[%u]->Range.DesignatorMin                = %hu\n",
+				cap_idx,
+				pp_cap->Range.DesignatorMin);
+		fprintf(file,
+				"pp_data->cap[%u]->Range.DesignatorMax                = %hu\n",
+				cap_idx,
+				pp_cap->Range.DesignatorMax);
+		fprintf(file,
+				"pp_data->cap[%u]->Range.DataIndexMin                 = %hu\n",
+				cap_idx,
+				pp_cap->Range.DataIndexMin);
+		fprintf(file,
+				"pp_data->cap[%u]->Range.DataIndexMax                 = %hu\n",
+				cap_idx,
+				pp_cap->Range.DataIndexMax);
 	}
 	else {
-		fprintf(file, "pp_data->cap[%u]->NotRange.Usage                        = 0x%04hX\n", cap_idx, pp_cap->NotRange.Usage);
-		fprintf(file, "pp_data->cap[%u]->NotRange.Reserved1                    = 0x%04hX\n", cap_idx, pp_cap->NotRange.Reserved1);
-		fprintf(file, "pp_data->cap[%u]->NotRange.StringIndex                  = %hu\n", cap_idx, pp_cap->NotRange.StringIndex);
-		fprintf(file, "pp_data->cap[%u]->NotRange.Reserved2                    = %hu\n", cap_idx, pp_cap->NotRange.Reserved2);
-		fprintf(file, "pp_data->cap[%u]->NotRange.DesignatorIndex              = %hu\n", cap_idx, pp_cap->NotRange.DesignatorIndex);
-		fprintf(file, "pp_data->cap[%u]->NotRange.Reserved3                    = %hu\n", cap_idx, pp_cap->NotRange.Reserved3);
-		fprintf(file, "pp_data->cap[%u]->NotRange.DataIndex                    = %hu\n", cap_idx, pp_cap->NotRange.DataIndex);
-		fprintf(file, "pp_data->cap[%u]->NotRange.Reserved4                    = %hu\n", cap_idx, pp_cap->NotRange.Reserved4);
+		fprintf(file,
+				"pp_data->cap[%u]->NotRange.Usage                        = 0x%04hX\n",
+				cap_idx,
+				pp_cap->NotRange.Usage);
+		fprintf(file,
+				"pp_data->cap[%u]->NotRange.Reserved1                    = 0x%04hX\n",
+				cap_idx,
+				pp_cap->NotRange.Reserved1);
+		fprintf(file,
+				"pp_data->cap[%u]->NotRange.StringIndex                  = %hu\n",
+				cap_idx,
+				pp_cap->NotRange.StringIndex);
+		fprintf(file,
+				"pp_data->cap[%u]->NotRange.Reserved2                    = %hu\n",
+				cap_idx,
+				pp_cap->NotRange.Reserved2);
+		fprintf(file,
+				"pp_data->cap[%u]->NotRange.DesignatorIndex              = %hu\n",
+				cap_idx,
+				pp_cap->NotRange.DesignatorIndex);
+		fprintf(file,
+				"pp_data->cap[%u]->NotRange.Reserved3                    = %hu\n",
+				cap_idx,
+				pp_cap->NotRange.Reserved3);
+		fprintf(file,
+				"pp_data->cap[%u]->NotRange.DataIndex                    = %hu\n",
+				cap_idx,
+				pp_cap->NotRange.DataIndex);
+		fprintf(file,
+				"pp_data->cap[%u]->NotRange.Reserved4                    = %hu\n",
+				cap_idx,
+				pp_cap->NotRange.Reserved4);
 	}
 
 	if (pp_cap->IsButtonCap) {
-		fprintf(file, "pp_data->cap[%u]->Button.LogicalMin                   = %ld\n", cap_idx, pp_cap->Button.LogicalMin);
-		fprintf(file, "pp_data->cap[%u]->Button.LogicalMax                   = %ld\n", cap_idx, pp_cap->Button.LogicalMax);
+		fprintf(file,
+				"pp_data->cap[%u]->Button.LogicalMin                   = %ld\n",
+				cap_idx,
+				pp_cap->Button.LogicalMin);
+		fprintf(file,
+				"pp_data->cap[%u]->Button.LogicalMax                   = %ld\n",
+				cap_idx,
+				pp_cap->Button.LogicalMax);
 	}
-	else
-	{
-		fprintf(file, "pp_data->cap[%u]->NotButton.HasNull                   = %hhu\n", cap_idx, pp_cap->NotButton.HasNull);
-		fprintf(file, "pp_data->cap[%u]->NotButton.Reserved4                 = 0x%02hhX%02hhX%02hhX\n", cap_idx, pp_cap->NotButton.Reserved4[0], pp_cap->NotButton.Reserved4[1], pp_cap->NotButton.Reserved4[2]);
-		fprintf(file, "pp_data->cap[%u]->NotButton.LogicalMin                = %ld\n", cap_idx, pp_cap->NotButton.LogicalMin);
-		fprintf(file, "pp_data->cap[%u]->NotButton.LogicalMax                = %ld\n", cap_idx, pp_cap->NotButton.LogicalMax);
-		fprintf(file, "pp_data->cap[%u]->NotButton.PhysicalMin               = %ld\n", cap_idx, pp_cap->NotButton.PhysicalMin);
-		fprintf(file, "pp_data->cap[%u]->NotButton.PhysicalMax               = %ld\n", cap_idx, pp_cap->NotButton.PhysicalMax);
+	else {
+		fprintf(file,
+				"pp_data->cap[%u]->NotButton.HasNull                   = %hhu\n",
+				cap_idx,
+				pp_cap->NotButton.HasNull);
+		fprintf(file,
+				"pp_data->cap[%u]->NotButton.Reserved4                 = 0x%02hhX%02hhX%02hhX\n",
+				cap_idx,
+				pp_cap->NotButton.Reserved4[0],
+				pp_cap->NotButton.Reserved4[1],
+				pp_cap->NotButton.Reserved4[2]);
+		fprintf(file,
+				"pp_data->cap[%u]->NotButton.LogicalMin                = %ld\n",
+				cap_idx,
+				pp_cap->NotButton.LogicalMin);
+		fprintf(file,
+				"pp_data->cap[%u]->NotButton.LogicalMax                = %ld\n",
+				cap_idx,
+				pp_cap->NotButton.LogicalMax);
+		fprintf(file,
+				"pp_data->cap[%u]->NotButton.PhysicalMin               = %ld\n",
+				cap_idx,
+				pp_cap->NotButton.PhysicalMin);
+		fprintf(file,
+				"pp_data->cap[%u]->NotButton.PhysicalMax               = %ld\n",
+				cap_idx,
+				pp_cap->NotButton.PhysicalMax);
 	};
 	fprintf(file, "pp_data->cap[%u]->Units                    = %lu\n", cap_idx, pp_cap->Units);
 	fprintf(file, "pp_data->cap[%u]->UnitsExp                 = %lu\n", cap_idx, pp_cap->UnitsExp);
@@ -87,26 +173,46 @@ void dump_hidp_link_collection_node(FILE* file, phid_pp_link_collection_node pco
 	fprintf(file, "pp_data->LinkCollectionArray[%u]->FirstChild         = %hu\n", coll_idx, pcoll->FirstChild);
 	// The compilers are not consistent on ULONG-bit-fields: They lose the unsinged or define them as int.
 	// Thus just always cast them to unsinged int, which should be fine, as the biggest bit-field is 28 bit
-	fprintf(file, "pp_data->LinkCollectionArray[%u]->CollectionType     = %u\n", coll_idx, (unsigned int)(pcoll->CollectionType));
-	fprintf(file, "pp_data->LinkCollectionArray[%u]->IsAlias            = %u\n", coll_idx, (unsigned int)(pcoll->IsAlias));
-	fprintf(file, "pp_data->LinkCollectionArray[%u]->Reserved           = 0x%08X\n", coll_idx, (unsigned int)(pcoll->Reserved));
+	fprintf(file,
+			"pp_data->LinkCollectionArray[%u]->CollectionType     = %u\n",
+			coll_idx,
+			(unsigned int)(pcoll->CollectionType));
+	fprintf(file,
+			"pp_data->LinkCollectionArray[%u]->IsAlias            = %u\n",
+			coll_idx,
+			(unsigned int)(pcoll->IsAlias));
+	fprintf(file,
+			"pp_data->LinkCollectionArray[%u]->Reserved           = 0x%08X\n",
+			coll_idx,
+			(unsigned int)(pcoll->Reserved));
 }
 
-int dump_pp_data(FILE* file, hid_device* dev)
-{
+int dump_pp_data(FILE* file, hid_device* dev) {
 	BOOL res;
 	hidp_preparsed_data* pp_data = NULL;
 
-	res = HidD_GetPreparsedData(dev->device_handle, (PHIDP_PREPARSED_DATA*) &pp_data);
+	res = HidD_GetPreparsedData(dev->device_handle, (PHIDP_PREPARSED_DATA*)&pp_data);
 	if (!res) {
 		printf("ERROR: HidD_GetPreparsedData failed!");
 		return -1;
 	}
 	else {
-		fprintf(file, "pp_data->MagicKey                             = 0x%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX\n", pp_data->MagicKey[0], pp_data->MagicKey[1], pp_data->MagicKey[2], pp_data->MagicKey[3], pp_data->MagicKey[4], pp_data->MagicKey[5], pp_data->MagicKey[6], pp_data->MagicKey[7]);
+		fprintf(file,
+				"pp_data->MagicKey                             = 0x%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX\n",
+				pp_data->MagicKey[0],
+				pp_data->MagicKey[1],
+				pp_data->MagicKey[2],
+				pp_data->MagicKey[3],
+				pp_data->MagicKey[4],
+				pp_data->MagicKey[5],
+				pp_data->MagicKey[6],
+				pp_data->MagicKey[7]);
 		fprintf(file, "pp_data->Usage                                = 0x%04hX\n", pp_data->Usage);
 		fprintf(file, "pp_data->UsagePage                            = 0x%04hX\n", pp_data->UsagePage);
-		fprintf(file, "pp_data->Reserved                             = 0x%04hX%04hX\n", pp_data->Reserved[0], pp_data->Reserved[1]);
+		fprintf(file,
+				"pp_data->Reserved                             = 0x%04hX%04hX\n",
+				pp_data->Reserved[0],
+				pp_data->Reserved[1]);
 		fprintf(file, "# Input caps_info struct:\n");
 		fprintf(file, "pp_data->caps_info[0]->FirstCap           = %hu\n", pp_data->caps_info[0].FirstCap);
 		fprintf(file, "pp_data->caps_info[0]->LastCap            = %hu\n", pp_data->caps_info[0].LastCap);
@@ -123,9 +229,10 @@ int dump_pp_data(FILE* file, hid_device* dev)
 		fprintf(file, "pp_data->caps_info[2]->NumberOfCaps       = %hu\n", pp_data->caps_info[2].NumberOfCaps);
 		fprintf(file, "pp_data->caps_info[2]->ReportByteLength   = %hu\n", pp_data->caps_info[2].ReportByteLength);
 		fprintf(file, "# LinkCollectionArray Offset & Size:\n");
-		fprintf(file, "pp_data->FirstByteOfLinkCollectionArray       = 0x%04hX\n", pp_data->FirstByteOfLinkCollectionArray);
+		fprintf(file,
+				"pp_data->FirstByteOfLinkCollectionArray       = 0x%04hX\n",
+				pp_data->FirstByteOfLinkCollectionArray);
 		fprintf(file, "pp_data->NumberLinkCollectionNodes            = %hu\n", pp_data->NumberLinkCollectionNodes);
-
 
 		phid_pp_cap pcap = (phid_pp_cap)(((unsigned char*)pp_data) + offsetof(hidp_preparsed_data, caps));
 		fprintf(file, "# Input hid_pp_cap struct:\n");
@@ -144,54 +251,66 @@ int dump_pp_data(FILE* file, hid_device* dev)
 			fprintf(file, "\n");
 		}
 
-		phid_pp_link_collection_node pcoll = (phid_pp_link_collection_node)(((unsigned char*)pcap) + pp_data->FirstByteOfLinkCollectionArray);
+		phid_pp_link_collection_node pcoll =
+			(phid_pp_link_collection_node)(((unsigned char*)pcap) + pp_data->FirstByteOfLinkCollectionArray);
 		fprintf(file, "# Link Collections:\n");
 		for (int coll_idx = 0; coll_idx < pp_data->NumberLinkCollectionNodes; coll_idx++) {
 			dump_hidp_link_collection_node(file, pcoll + coll_idx, coll_idx);
 		}
 
-		HidD_FreePreparsedData((PHIDP_PREPARSED_DATA) pp_data);
+		HidD_FreePreparsedData((PHIDP_PREPARSED_DATA)pp_data);
 		return 0;
 	}
 }
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
 	(void)argc;
 	(void)argv;
 
-	#define MAX_STR 255
+#define MAX_STR 255
 
 	struct hid_device_info *devs, *cur_dev;
 
-	printf("pp_data_dump tool. Compiled with hidapi version %s, runtime version %s.\n", HID_API_VERSION_STR, hid_version_str());
-	if (hid_version()->major == HID_API_VERSION_MAJOR && hid_version()->minor == HID_API_VERSION_MINOR && hid_version()->patch == HID_API_VERSION_PATCH) {
+	printf("pp_data_dump tool. Compiled with hidapi version %s, runtime version %s.\n",
+		   HID_API_VERSION_STR,
+		   hid_version_str());
+	if (hid_version()->major == HID_API_VERSION_MAJOR && hid_version()->minor == HID_API_VERSION_MINOR &&
+		hid_version()->patch == HID_API_VERSION_PATCH) {
 		printf("Compile-time version matches runtime version of hidapi.\n\n");
 	}
 	else {
 		printf("Compile-time version is different than runtime version of hidapi.\n]n");
 	}
 
-	if (hid_init())
-		return -1;
+	if (hid_init()) return -1;
 
 	devs = hid_enumerate(0x0, 0x0);
 	cur_dev = devs;
 	while (cur_dev) {
-		printf("Device Found\n  type: %04hx %04hx\n  path: %s\n  serial_number: %ls", cur_dev->vendor_id, cur_dev->product_id, cur_dev->path, cur_dev->serial_number);
+		printf("Device Found\n  type: %04hx %04hx\n  path: %s\n  serial_number: %ls",
+			   cur_dev->vendor_id,
+			   cur_dev->product_id,
+			   cur_dev->path,
+			   cur_dev->serial_number);
 		printf("\n");
 		printf("  Manufacturer: %ls\n", cur_dev->manufacturer_string);
 		printf("  Product:      %ls\n", cur_dev->product_string);
 		printf("  Release:      %hX\n", cur_dev->release_number);
-		printf("  Interface:    %d\n",  cur_dev->interface_number);
+		printf("  Interface:    %d\n", cur_dev->interface_number);
 		printf("  Usage (page): %02X (%02X)\n", cur_dev->usage, cur_dev->usage_page);
 
-		hid_device *device = hid_open_path(cur_dev->path);
+		hid_device* device = hid_open_path(cur_dev->path);
 		if (device) {
 			char filename[MAX_STR];
 			FILE* file;
 
-			sprintf_s(filename, MAX_STR, "%04X_%04X_%04X_%04X.pp_data", cur_dev->vendor_id, cur_dev->product_id, cur_dev->usage, cur_dev->usage_page);
+			sprintf_s(filename,
+					  MAX_STR,
+					  "%04X_%04X_%04X_%04X.pp_data",
+					  cur_dev->vendor_id,
+					  cur_dev->product_id,
+					  cur_dev->usage,
+					  cur_dev->usage_page);
 			errno_t err = fopen_s(&file, filename, "w");
 			if (err == 0) {
 				fprintf(file, "# HIDAPI device info struct:\n");
@@ -228,11 +347,10 @@ int main(int argc, char* argv[])
 	}
 	hid_free_enumeration(devs);
 
-
 	/* Free static HIDAPI objects. */
 	hid_exit();
 
-	//system("pause");
+	// system("pause");
 
 	return 0;
 }
